@@ -1,0 +1,25 @@
+version: "2"
+services:
+#  phpunit:
+#    container_name: rockpaperscissor-webapp-phpunit
+#    image: php
+#    ports:
+#      - "22:22"
+#    volumes:
+#      - .:/opt/application
+
+  backend:
+    container_name: rockpaperscissor-webapp-php
+    image: rockpaperscissor-webapp-php
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/opt/application
+
+  frontend:
+    container_name: rockpaperscissor-webapp-react
+    image: rockpaperscissor-webapp-react
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./frontend:/opt/application
