@@ -4,9 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "69a75fe975f9e6cf45b61d15b3a9d2d9",
-    "content-hash": "f078266d857898e1f64397108cdc79c6",
+    "hash": "10a3c810907cbfad41d7787b0df0d157",
+    "content-hash": "39dbc7d610d72959f81248b77946cf02",
     "packages": [
+        {
+            "name": "balwan/rock-paper-scissor",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rvelhote/librockpaperscissor.git",
+                "reference": "cd2d0d3762e59298f358f2fe18192c92b8de441c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rvelhote/librockpaperscissor/zipball/cd2d0d3762e59298f358f2fe18192c92b8de441c",
+                "reference": "cd2d0d3762e59298f358f2fe18192c92b8de441c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Balwan\\RockPaperScissor\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ricardo Velhote",
+                    "email": "rvelhote+github@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP library to create games based on Rock Paper Scissor.",
+            "time": "2016-06-19 15:19:20"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.7",
