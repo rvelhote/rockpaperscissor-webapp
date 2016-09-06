@@ -26,7 +26,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    apt-get install -y --no-install-recommends php7.0-cli php7.0-xml php7.0-mbstring php7.0-bz2 php-xdebug ca-certificates
+    apt-get install -y --no-install-recommends php7.0-cli php7.0-xml php7.0-mbstring php7.0-bz2 php7.0-zip php-xdebug ca-certificates
 
 RUN php -r "file_put_contents('symfony', file_get_contents('https://symfony.com/installer'));" && \
     mv symfony /usr/local/bin/symfony && \
