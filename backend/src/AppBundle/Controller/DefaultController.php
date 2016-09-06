@@ -2,6 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use Balwan\RockPaperScissor\Game\Game;
+use Balwan\RockPaperScissor\Game\Result\Tie;
+use Balwan\RockPaperScissor\Game\Result\Win;
+use Balwan\RockPaperScissor\Player\Player;
+use Balwan\RockPaperScissor\Rule\Rule;
+use Balwan\RockPaperScissor\Rule\RuleCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,7 +25,22 @@ class DefaultController extends Controller
      */
     public function playAction(Request $request)
     {
-        $moves = ['Rock', 'Paper', 'Scissors'];
+        $moves = [
+            ['name' => 'Rock', 'move' => 'rock'],
+            ['name' => 'Paper', 'move' => 'paper'],
+            ['name' => 'Scissors', 'move' => 'scissors'],
+        ];
+
+        $player1 = new Player('@rvelhote', $request->get('move', null));
+        $player2 = new Player('@'.uniqid(), $moves[random_int(0, 2)]['move']);
+
+        $rules = new RuleCollection();
+        $rules->add(new Rule('Paper', 'Rock', 'Covers'));
+        $rules->add(new Rule('Scissors', 'Paper', 'Cuts'));
+        $rules->add(new Rule('Rock', 'Scissors', 'Smashes'));
+
+        $game = new Game($player1, $player2, $rules);
+        $gameResult = $game->result();
 
         $game = [
             'game' => [
@@ -33,8 +54,9 @@ class DefaultController extends Controller
             ],
             'result' => [
                 'opponent' => "@".uniqid('handle', true),
-                'move' => $moves[random_int(0, 2)],
-                'winner' => mt_rand(0, 2),
+                'move' => $player2->getPlay(),
+                'winner' => ($gameResult instanceof Tie) ? 0 : ($gameResult->getWinner() == $player1 ? 1 : 2),
+                'outcome' => ($gameResult instanceof Tie) ? 'Tie' : $gameResult->getRule()->getText(),
             ],
         ];
 
@@ -50,7 +72,11 @@ class DefaultController extends Controller
      */
     public function gameAction(Request $request)
     {
-        $moves = ['Rock', 'Paper', 'Scissors'];
+        $moves = [
+            ['name' => 'Rock', 'move' => 'rock'],
+            ['name' => 'Paper', 'move' => 'paper'],
+            ['name' => 'Scissors', 'move' => 'scissors'],
+        ];
 
         $game = [
             'uuid' => uniqid('game', true),

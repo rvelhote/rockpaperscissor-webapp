@@ -43,17 +43,19 @@ class GameComponent extends React.Component {
                     uuid: '',
                     handle: '',
                     picture: ''
-                }
+                },
+                moves: []
             },
             result: {
                 move: '',
                 winner: ''
-            }
+            },
+            history: []
         };
     }
 
     componentDidMount() {
-        this.requestNewGame().then(() => console.log(this.state));
+        this.requestNewGame();//.then(() => console.log(this.state));
     }
 
     onPlayClick(target) {
@@ -93,9 +95,11 @@ class GameComponent extends React.Component {
                     <div className="col-lg-5">
                         <Player player={this.state.player} />
 
-                        <Move name="rock" play={this.onPlayClick.bind(this)} />
-                        <Move name="paper" play={this.onPlayClick.bind(this)} />
-                        <Move name="scissors" play={this.onPlayClick.bind(this)} />
+                        {
+                            this.state.game.moves.map((m) =>
+                                <Move key={m.move} name={m.move} play={this.onPlayClick.bind(this)} />
+                            )
+                        }
                     </div>
 
                     <div className="col-lg-2">
@@ -111,6 +115,7 @@ class GameComponent extends React.Component {
                         <ul>
                             <li>Opponent played: {this.state.result.move}</li>
                             <li>You played: {this.state.player.move}</li>
+                            <li>Result: {this.state.result.outcome}</li>
                             <li>Result: {this.state.result.winner}</li>
                         </ul>
                     </div>
