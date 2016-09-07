@@ -1,13 +1,5 @@
 version: "2"
 services:
-#  phpunit:
-#    container_name: rockpaperscissor-webapp-phpunit
-#    image: php
-#    ports:
-#      - "22:22"
-#    volumes:
-#      - .:/opt/application
-
   backend:
     container_name: rockpaperscissor-webapp-php
     image: rockpaperscissor-webapp-php
@@ -23,3 +15,13 @@ services:
       - "8000:8000"
     volumes:
       - ./frontend:/opt/application
+
+  db:
+    container_name: rockpaperscissor-webapp-mariadb
+    image: mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./.database:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=r00t
