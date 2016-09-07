@@ -25,3 +25,10 @@ services:
       - ./.database:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=r00t
+
+  mailserver:
+    container_name: rockpaperscissor-webapp-mailhog
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
