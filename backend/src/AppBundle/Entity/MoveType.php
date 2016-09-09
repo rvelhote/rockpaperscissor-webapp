@@ -36,26 +36,18 @@ class MoveType
     private $slug;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="isActive", type="boolean")
+     * @ORM\ManyToMany(targetEntity="GameType", mappedBy="moveTypes")
+     * @ORM\JoinTable(name="games_moves")
      */
-    private $isActive;
-
+    private $gameTypes;
+   
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="dateCreated", type="datetimetz")
+     * Constructor
      */
-    private $dateCreated;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="dateUpdated", type="datetimetz")
-     */
-    private $dateUpdated;
-
+    public function __construct()
+    {
+        $this->gameTypes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -116,74 +108,36 @@ class MoveType
     }
 
     /**
-     * Set isActive
+     * Add gameType
      *
-     * @param boolean $isActive
+     * @param \AppBundle\Entity\GameType $gameType
      *
      * @return MoveType
      */
-    public function setIsActive($isActive)
+    public function addGameType(\AppBundle\Entity\GameType $gameType)
     {
-        $this->isActive = $isActive;
+        $this->gameTypes[] = $gameType;
 
         return $this;
     }
 
     /**
-     * Get isActive
+     * Remove gameType
      *
-     * @return boolean
+     * @param \AppBundle\Entity\GameType $gameType
      */
-    public function getIsActive()
+    public function removeGameType(\AppBundle\Entity\GameType $gameType)
     {
-        return $this->isActive;
+        $this->gameTypes->removeElement($gameType);
     }
 
     /**
-     * Set dateCreated
+     * Get gameTypes
      *
-     * @param \DateTime $dateCreated
-     *
-     * @return MoveType
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function setDateCreated($dateCreated)
+    public function getGameTypes()
     {
-        $this->dateCreated = $dateCreated;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreated
-     *
-     * @return \DateTime
-     */
-    public function getDateCreated()
-    {
-        return $this->dateCreated;
-    }
-
-    /**
-     * Set dateUpdated
-     *
-     * @param \DateTime $dateUpdated
-     *
-     * @return MoveType
-     */
-    public function setDateUpdated($dateUpdated)
-    {
-        $this->dateUpdated = $dateUpdated;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUpdated
-     *
-     * @return \DateTime
-     */
-    public function getDateUpdated()
-    {
-        return $this->dateUpdated;
+        return $this->gameTypes;
     }
 }

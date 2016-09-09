@@ -23,8 +23,8 @@ class Game
     private $id;
 
     /**
-     * @var guid
-     * @ORM\Column(name="guid", type="guid")
+     * @var string
+     * @ORM\Column(name="guid")
      */
     private $guid;
 
@@ -39,12 +39,6 @@ class Game
      * @ORM\ManyToOne(targetEntity="Player")
      */
     private $player2;
-
-    /**
-     * @var DateTime
-     * @ORM\Column(name="dateCreated", type="datetimetz")
-     */
-    private $dateCreated;
 
     /**
      * @var DateTime
@@ -64,6 +58,11 @@ class Game
      */
     private $movePlayer2;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="GameType")
+     */
+    private $gameType;
+
 
     /**
      * Get id
@@ -78,7 +77,7 @@ class Game
     /**
      * Set guid
      *
-     * @param guid $guid
+     * @param string $guid
      *
      * @return Game
      */
@@ -92,35 +91,11 @@ class Game
     /**
      * Get guid
      *
-     * @return guid
+     * @return string
      */
     public function getGuid()
     {
         return $this->guid;
-    }
-
-    /**
-     * Set dateCreated
-     *
-     * @param \DateTime $dateCreated
-     *
-     * @return Game
-     */
-    public function setDateCreated($dateCreated)
-    {
-        $this->dateCreated = $dateCreated;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreated
-     *
-     * @return \DateTime
-     */
-    public function getDateCreated()
-    {
-        return $this->dateCreated;
     }
 
     /**
@@ -241,5 +216,29 @@ class Game
     public function getMovePlayer2()
     {
         return $this->movePlayer2;
+    }
+
+    /**
+     * Set gameType
+     *
+     * @param \AppBundle\Entity\GameType $gameType
+     *
+     * @return Game
+     */
+    public function setGameType(\AppBundle\Entity\GameType $gameType = null)
+    {
+        $this->gameType = $gameType;
+
+        return $this;
+    }
+
+    /**
+     * Get gameType
+     *
+     * @return \AppBundle\Entity\GameType
+     */
+    public function getGameType()
+    {
+        return $this->gameType;
     }
 }

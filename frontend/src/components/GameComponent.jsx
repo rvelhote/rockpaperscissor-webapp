@@ -61,6 +61,7 @@ class GameComponent extends React.Component {
     onPlayClick(target) {
         var data = new FormData();
         data.append('move', target.dataset.move);
+        data.append('game', this.state.game.guid);
 
         var player = {
             handle: this.state.player.handle,
@@ -117,6 +118,7 @@ class GameComponent extends React.Component {
                             <li>You played: {this.state.player.move}</li>
                             <li>Result: {this.state.result.outcome}</li>
                             <li>Result: {this.state.result.winner}</li>
+                            <li>Game ID: {this.state.game.guid}</li>
                         </ul>
                     </div>
                 </div>

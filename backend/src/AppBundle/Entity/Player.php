@@ -28,14 +28,6 @@ class Player
     private $handle;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="dateCreated", type="datetimetz")
-     */
-    private $dateCreated;
-
-
-    /**
      * Get id
      *
      * @return integer
@@ -67,29 +59,5 @@ class Player
     public function getHandle()
     {
         return $this->handle;
-    }
-
-    /**
-     * Set dateCreated
-     *
-     * @param \DateTime $dateCreated
-     *
-     * @return Player
-     */
-    public function setDateCreated($dateCreated)
-    {
-        $this->dateCreated = $dateCreated;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreated
-     *
-     * @return \DateTime
-     */
-    public function getDateCreated()
-    {
-        return $this->dateCreated;
     }
 }
