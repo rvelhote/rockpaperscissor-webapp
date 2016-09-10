@@ -37,7 +37,6 @@ class MoveType
 
     /**
      * @ORM\ManyToMany(targetEntity="GameType", mappedBy="moveTypes")
-     * @ORM\JoinTable(name="games_moves")
      */
     private $gameTypes;
    

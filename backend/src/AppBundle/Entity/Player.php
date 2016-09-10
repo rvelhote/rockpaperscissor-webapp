@@ -28,6 +28,11 @@ class Player
     private $handle;
 
     /**
+     * @ORM\OneToMany(targetEntity="Result", mappedBy="player")
+     */
+    private $results;
+
+    /**
      * Get id
      *
      * @return integer
@@ -59,5 +64,46 @@ class Player
     public function getHandle()
     {
         return $this->handle;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add result
+     *
+     * @param \AppBundle\Entity\Result $result
+     *
+     * @return Player
+     */
+    public function addResult(\AppBundle\Entity\Result $result)
+    {
+        $this->results[] = $result;
+
+        return $this;
+    }
+
+    /**
+     * Remove result
+     *
+     * @param \AppBundle\Entity\Result $result
+     */
+    public function removeResult(\AppBundle\Entity\Result $result)
+    {
+        $this->results->removeElement($result);
+    }
+
+    /**
+     * Get results
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getResults()
+    {
+        return $this->results;
     }
 }

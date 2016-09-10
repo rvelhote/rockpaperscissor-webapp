@@ -63,6 +63,11 @@ class Game
      */
     private $gameType;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Result", inversedBy="games", cascade={"all"})
+     */
+    private $results;
+
 
     /**
      * Get id
@@ -240,5 +245,46 @@ class Game
     public function getGameType()
     {
         return $this->gameType;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add result
+     *
+     * @param \AppBundle\Entity\Result $result
+     *
+     * @return Game
+     */
+    public function addResult(\AppBundle\Entity\Result $result)
+    {
+        $this->results[] = $result;
+
+        return $this;
+    }
+
+    /**
+     * Remove result
+     *
+     * @param \AppBundle\Entity\Result $result
+     */
+    public function removeResult(\AppBundle\Entity\Result $result)
+    {
+        $this->results->removeElement($result);
+    }
+
+    /**
+     * Get results
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getResults()
+    {
+        return $this->results;
     }
 }
