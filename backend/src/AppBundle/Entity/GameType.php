@@ -33,13 +33,20 @@ class GameType
      *
      */
     private $moveTypes;
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="Rule", mappedBy="gameType")
+     *
+     */
+    private $rules;
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->moveTypes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->rules = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -111,36 +118,36 @@ class GameType
     }
 
     /**
-     * Add game
+     * Add rule
      *
-     * @param \AppBundle\Entity\Game $game
+     * @param \AppBundle\Entity\Rule $rule
      *
      * @return GameType
      */
-    public function addGame(\AppBundle\Entity\Game $game)
+    public function addRule(\AppBundle\Entity\Rule $rule)
     {
-        $this->games[] = $game;
+        $this->rules[] = $rule;
 
         return $this;
     }
 
     /**
-     * Remove game
+     * Remove rule
      *
-     * @param \AppBundle\Entity\Game $game
+     * @param \AppBundle\Entity\Rule $rule
      */
-    public function removeGame(\AppBundle\Entity\Game $game)
+    public function removeRule(\AppBundle\Entity\Rule $rule)
     {
-        $this->games->removeElement($game);
+        $this->rules->removeElement($rule);
     }
 
     /**
-     * Get games
+     * Get rules
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getGames()
+    public function getRules()
     {
-        return $this->games;
+        return $this->rules;
     }
 }

@@ -49,59 +49,84 @@ class DefaultController extends Controller
      */
     public function generateAction()
     {
-//        $em = $this->getDoctrine()->getManager();
-//
-//        $moves = ['Rock', 'Paper', 'Scissors'];
-//        foreach($moves as $move) {
-//            $moveType = new MoveType();
-//            $moveType->setName($move);
-//            $moveType->setSlug(mb_strtolower($move));
-//            $em->persist($moveType);
-//            $em->flush();
-//        }
-//
-//        $player1 = new \AppBundle\Entity\Player();
-//        $player1->setHandle("@rvelhote");
-//
-//        $em->persist($player1);
-//        $em->flush();
-//
-//        $player2 = new \AppBundle\Entity\Player();
-//        $player2->setHandle("@abardadyn");
-//
-//        $em->persist($player2);
-//        $em->flush();
-//
-//        $player1 = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
-//        $player2 = $this->getDoctrine()->getRepository('AppBundle:Player')->find(2);
-//
-//        /** @var MoveType[] $moves */
-//        $moves = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findAll();
-//
-//        $gameType = new GameType();
-//        $gameType->setName('Rock Paper Scissors');
-//        $gameType->addMoveType($moves[0]);
-//        $gameType->addMoveType($moves[1]);
-//        $gameType->addMoveType($moves[2]);
-//
-//        $em->persist($gameType);
-//        $em->flush();
-//
-////        var_dump($moves[0]->getName());exit;
-//
-//        for($i = 0; $i < 1000; $i++) {
-//            $unique = Uuid::uuid1(random_int(0, 9999999))->toString();
-//
-//            $game = new \AppBundle\Entity\Game();
-//            $game->setGuid($unique);
-//
-//            $game->setPlayer2($player2);
-//            $game->setMovePlayer2($moves[random_int(0, 2)]);
-//            $game->setGameType($gameType);
-//
-//            $em->persist($game);
-//            $em->flush();
-//        }
+        $em = $this->getDoctrine()->getManager();
+
+        $moves = ['Rock', 'Paper', 'Scissors'];
+        foreach($moves as $move) {
+            $moveType = new MoveType();
+            $moveType->setName($move);
+            $moveType->setSlug(mb_strtolower($move));
+            $em->persist($moveType);
+            $em->flush();
+        }
+
+        $player1 = new \AppBundle\Entity\Player();
+        $player1->setHandle("@rvelhote");
+
+        $em->persist($player1);
+        $em->flush();
+
+        $player2 = new \AppBundle\Entity\Player();
+        $player2->setHandle("@abardadyn");
+
+        $em->persist($player2);
+        $em->flush();
+
+        $player1 = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+        $player2 = $this->getDoctrine()->getRepository('AppBundle:Player')->find(2);
+
+        /** @var MoveType[] $moves */
+        $moves = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findAll();
+
+        $gameType = new GameType();
+        $gameType->setName('Rock Paper Scissors');
+        $gameType->addMoveType($moves[0]);
+        $gameType->addMoveType($moves[1]);
+        $gameType->addMoveType($moves[2]);
+
+        $em->persist($gameType);
+        $em->flush();
+
+        $rules = new \AppBundle\Entity\Rule();
+        $rules->setGameType($gameType);
+        $rules->setWinner($moves[1]);
+        $rules->setLoser($moves[0]);
+        $rules->setOutcome('Covers');
+        $em->persist($rules);
+        $em->flush();
+
+        $rules = new \AppBundle\Entity\Rule();
+        $rules->setGameType($gameType);
+        $rules->setWinner($moves[2]);
+        $rules->setLoser($moves[1]);
+        $rules->setOutcome('Cuts');
+        $em->persist($rules);
+        $em->flush();
+
+        $rules = new \AppBundle\Entity\Rule();
+        $rules->setGameType($gameType);
+        $rules->setWinner($moves[0]);
+        $rules->setLoser($moves[2]);
+        $rules->setOutcome('Smashes');
+        $em->persist($rules);
+        $em->flush();
+
+
+//        var_dump($moves[0]->getName());exit;
+
+        for($i = 0; $i < 100; $i++) {
+            $unique = Uuid::uuid1(random_int(0, 9999999))->toString();
+
+            $game = new \AppBundle\Entity\Game();
+            $game->setGuid($unique);
+
+            $game->setPlayer2($player2);
+            $game->setMovePlayer2($moves[random_int(0, 2)]);
+            $game->setGameType($gameType);
+
+            $em->persist($game);
+            $em->flush();
+        }
 
 
         return new Response("Cool");
@@ -185,9 +210,16 @@ class DefaultController extends Controller
         $player2 = new Player($game->getPlayer2()->getHandle(), $game->getMovePlayer2()->getSlug());
 
         $rules = new RuleCollection();
-        $rules->add(new Rule('Paper', 'Rock', 'Covers'));
-        $rules->add(new Rule('Scissors', 'Paper', 'Cuts'));
-        $rules->add(new Rule('Rock', 'Scissors', 'Smashes'));
+//        $rules->add(new Rule('Paper', 'Rock', 'Covers'));
+//        $rules->add(new Rule('Scissors', 'Paper', 'Cuts'));
+//        $rules->add(new Rule('Rock', 'Scissors', 'Smashes'));
+
+        $databaseRules = $game->getGameType()->getRules();
+
+        /** @var \AppBundle\Entity\Rule $r */
+        foreach($databaseRules as $r) {
+            $rules->add(new Rule($r->getWinner()->getName(), $r->getLoser()->getName(), $r->getOutcome()));
+        }
 
         $gameGame = new Game($player1, $player2, $rules);
         $gameResult = $gameGame->result();
