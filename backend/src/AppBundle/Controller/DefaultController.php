@@ -323,12 +323,22 @@ class DefaultController extends Controller
     }
 
     /**
-     *
+     * TODO Investigate SELECT FOR UPDATE
+     * TODO CRON that will search for games in a locked state for a long time. Requires lock timestamp.
      */
     private function getNewGame()
     {
+        $em = $this->getDoctrine()->getManager();
+
         /** @var \AppBundle\Entity\Game $game */
-        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
+        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['locked' =>  null]);
+        $game->setLocked(true);
+        $em->persist($game);
+        $em->flush();
+
+
+//        /** @var \AppBundle\Entity\Game $game */
+//        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
 
         if(is_null($game)) {
             $game = [
@@ -342,6 +352,13 @@ class DefaultController extends Controller
             ];
             return $game;
         }
+
+//        /** @var \AppBundle\Entity\Game $entity */
+//        $entity = $em->find('AppBundle\Entity\Game', $game->getId(), \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
+//
+//        $entity->setLocked(true);
+//
+//        $em->persist($entity);
 
         $moves = array_map(function($move) {
             /** @var MoveType $move */

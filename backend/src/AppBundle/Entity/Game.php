@@ -68,6 +68,13 @@ class Game
      */
     private $results;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="locked", type="boolean", nullable=true, options={"default": false})
+     */
+    private $locked;
+
 
     /**
      * Get id
@@ -286,5 +293,29 @@ class Game
     public function getResults()
     {
         return $this->results;
+    }
+
+    /**
+     * Set locked
+     *
+     * @param boolean $locked
+     *
+     * @return Game
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    /**
+     * Get locked
+     *
+     * @return boolean
+     */
+    public function getLocked()
+    {
+        return $this->locked;
     }
 }
