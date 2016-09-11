@@ -68,14 +68,16 @@ class DefaultController extends Controller
         $em->persist($player1);
         $em->flush();
 
-        $player2 = new \AppBundle\Entity\Player();
-        $player2->setHandle("@abardadyn");
+        for($i = 0; $i < 20; $i++) {
+            $player = new \AppBundle\Entity\Player();
+            $player->setHandle("@abardadyn <".$i.">");
 
-        $em->persist($player2);
-        $em->flush();
+            $em->persist($player);
+            $em->flush();
+        }
 
         $player1 = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
-        $player2 = $this->getDoctrine()->getRepository('AppBundle:Player')->find(2);
+        $players = $this->getDoctrine()->getRepository('AppBundle:Player')->findAll();
 
         /** @var MoveType[] $moves */
         $moves = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findAll();
@@ -116,13 +118,13 @@ class DefaultController extends Controller
 
 //        var_dump($moves[0]->getName());exit;
 
-        for($i = 0; $i < 50; $i++) {
+        for($i = 0; $i < 1000; $i++) {
             $unique = Uuid::uuid4()->toString();
 
             $game = new \AppBundle\Entity\Game();
             $game->setGuid($unique);
 
-            $game->setPlayer2($player2);
+            $game->setPlayer2($players[random_int(1, count($players) - 1)]);
             $game->setMovePlayer2($moves[random_int(0, 2)]);
             $game->setGameType($gameType);
 
@@ -199,8 +201,8 @@ class DefaultController extends Controller
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
-        $em->getConnection()->beginTransaction(); // suspend auto-commit
-        try {
+//        $em->getConnection()->beginTransaction(); // suspend auto-commit
+//        try {
 
             /** @var \AppBundle\Entity\Game $game */
             $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['guid' => $request->get('game')]);
@@ -266,31 +268,31 @@ class DefaultController extends Controller
 
             $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
 
-            $newGame = [
-                'game' => $this->getNewGame(),
-                'result' => [
-                    'opponent' => $game->getPlayer2()->getHandle(),
-                    'move' => $player2->getPlay(),
-                    'winner' => ($gameResult instanceof Tie) ? 0 : ($gameResult->getWinner() == $player1 ? 1 : 2),
-                    'outcome' => ($gameResult instanceof Tie) ? 'Tie' : $gameResult->getRule()->getText(),
-                ],
-                'stats' => [
-                    'win' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'win' => 1])),
-                    'draw' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'draw' => 1])),
-                    'lose' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'lose' => 1])),
-                ]
-            ];
 
 
 
-            $em->getConnection()->commit();
-        } catch (\Exception $e) {
-            $em->getConnection()->rollBack();
-            throw $e;
-        }
+
+//            $em->getConnection()->commit();
+//        } catch (\Exception $e) {
+//            $em->getConnection()->rollBack();
+//            throw $e;
+//        }
 
 
-
+        $newGame = [
+            'game' => $this->getNewGame(),
+            'result' => [
+                'opponent' => $game->getPlayer2()->getHandle(),
+                'move' => $player2->getPlay(),
+                'winner' => ($gameResult instanceof Tie) ? 0 : ($gameResult->getWinner() == $player1 ? 1 : 2),
+                'outcome' => ($gameResult instanceof Tie) ? 'Tie' : $gameResult->getRule()->getText(),
+            ],
+            'stats' => [
+                'win' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'win' => 1])),
+                'draw' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'draw' => 1])),
+                'lose' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'lose' => 1])),
+            ]
+        ];
 
 
         return new JsonResponse($newGame);
