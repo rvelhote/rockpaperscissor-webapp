@@ -116,8 +116,8 @@ class DefaultController extends Controller
 
 //        var_dump($moves[0]->getName());exit;
 
-        for($i = 0; $i < 5; $i++) {
-            $unique = Uuid::uuid1(random_int(0, 9999999))->toString();
+        for($i = 0; $i < 50; $i++) {
+            $unique = Uuid::uuid4()->toString();
 
             $game = new \AppBundle\Entity\Game();
             $game->setGuid($unique);
@@ -274,11 +274,11 @@ class DefaultController extends Controller
                     'winner' => ($gameResult instanceof Tie) ? 0 : ($gameResult->getWinner() == $player1 ? 1 : 2),
                     'outcome' => ($gameResult instanceof Tie) ? 'Tie' : $gameResult->getRule()->getText(),
                 ],
-//                'stats' => [
-//                    'win' => count($resultsRepo->findBy(['player_id' => $game->getPlayer1()->getId(), 'win' => 1])),
-//                    'draw' => count($resultsRepo->findBy(['player_id' => $game->getPlayer1()->getId(), 'draw' => 1])),
-//                    'lose' => count($resultsRepo->findBy(['player_id' => $game->getPlayer1()->getId(), 'lose' => 1])),
-//                ]
+                'stats' => [
+                    'win' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'win' => 1])),
+                    'draw' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'draw' => 1])),
+                    'lose' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'lose' => 1])),
+                ]
             ];
 
 
@@ -305,9 +305,21 @@ class DefaultController extends Controller
      */
     public function gameAction(Request $request)
     {
+        $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
 
+        /** @var \AppBundle\Entity\Player $player */
+        $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
 
-        return new JsonResponse($this->getNewGame(), 200);
+        $newGame = [
+            'game' => $this->getNewGame(),
+            'stats' => [
+                'win' => count($resultsRepo->findBy(['player' => $player->getId(), 'win' => 1])),
+                'draw' => count($resultsRepo->findBy(['player' => $player->getId(), 'draw' => 1])),
+                'lose' => count($resultsRepo->findBy(['player' => $player->getId(), 'lose' => 1])),
+            ]
+        ];
+
+        return new JsonResponse($newGame);
     }
 
     /**
@@ -317,6 +329,19 @@ class DefaultController extends Controller
     {
         /** @var \AppBundle\Entity\Game $game */
         $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
+
+        if(is_null($game)) {
+            $game = [
+                'guid' => 'game over',
+                'opponent' => [
+                    'handle' => 'game over',
+                    'picture' => ''
+                ],
+                'moves' => [],
+                'gameType' => ['name' => 'game over']
+            ];
+            return $game;
+        }
 
         $moves = array_map(function($move) {
             /** @var MoveType $move */

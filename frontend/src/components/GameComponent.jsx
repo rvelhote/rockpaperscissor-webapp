@@ -26,6 +26,7 @@
 import React from 'react';
 import Player from './PlayerComponent';
 import Move from './MoveComponent';
+import Stats from './StatsComponent';
 
 require('styles/Game.css');
 
@@ -49,6 +50,11 @@ class GameComponent extends React.Component {
             result: {
                 move: '',
                 winner: ''
+            },
+            stats: {
+                win: 0,
+                lose: 0,
+                draw: 0
             },
             history: []
         };
@@ -75,14 +81,14 @@ class GameComponent extends React.Component {
 
         return fetch(request)
             .then(response => response.json())
-            .then(response => this.setState({ player: player, result: response.result, game: response.game }));
+            .then(response => this.setState({ player: player, stats: response.stats, result: response.result, game: response.game }));
     }
 
     requestNewGame() {
         var request = new Request('http://localhost:8080/game', {
             method: 'POST'
         });
-        return fetch(request).then(response => response.json()).then(response => this.setState({ game: response }));
+        return fetch(request).then(response => response.json()).then(response => this.setState({ stats: response.stats, game: response.game }));
     }
 
     /**
@@ -92,6 +98,9 @@ class GameComponent extends React.Component {
     render() {
         return (
             <section className="game-component col-lg-12">
+                <div className="row">
+                    <Stats win={this.state.stats.win} lose={this.state.stats.lose} draw={this.state.stats.draw}/>
+                </div>
                 <div className="row">
                     <div className="col-lg-5">
                         <Player player={this.state.player} />
