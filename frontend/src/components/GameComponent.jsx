@@ -56,7 +56,8 @@ class GameComponent extends React.Component {
                 lose: 0,
                 draw: 0
             },
-            history: []
+            history: [],
+            working: false
         };
     }
 
@@ -68,6 +69,8 @@ class GameComponent extends React.Component {
         var data = new FormData();
         data.append('move', target.dataset.move);
         data.append('game', this.state.game.guid);
+
+        this.setState({working: true});
 
         var player = {
             handle: this.state.player.handle,
@@ -81,14 +84,15 @@ class GameComponent extends React.Component {
 
         return fetch(request)
             .then(response => response.json())
-            .then(response => this.setState({ player: player, stats: response.stats, result: response.result, game: response.game }));
+            .then(response => this.setState({ working: false, player: player, stats: response.stats, result: response.result, game: response.game }));
     }
 
     requestNewGame() {
+        this.setState({working: true});
         var request = new Request('http://localhost:8080/game', {
             method: 'POST'
         });
-        return fetch(request).then(response => response.json()).then(response => this.setState({ stats: response.stats, game: response.game }));
+        return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, game: response.game }));
     }
 
     /**
@@ -96,8 +100,16 @@ class GameComponent extends React.Component {
      * @returns {XML}
      */
     render() {
+        var working;
+        if(this.state.working) {
+            working = 'working'
+        }
+
+
         return (
             <section className="game-component col-lg-12">
+                __ {working} __
+
                 <div className="row">
                     <Stats win={this.state.stats.win} lose={this.state.stats.lose} draw={this.state.stats.draw}/>
                 </div>
@@ -107,7 +119,7 @@ class GameComponent extends React.Component {
 
                         {
                             this.state.game.moves.map((m) =>
-                                <Move key={m.move} name={m.move} play={this.onPlayClick.bind(this)} />
+                                <Move key={m.move} disabled={this.state.working} name={m.move} play={this.onPlayClick.bind(this)} />
                             )
                         }
                     </div>
