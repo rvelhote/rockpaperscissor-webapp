@@ -67,11 +67,11 @@ class GameComponent extends React.Component {
 
     onPlayClick(target) {
         var data = new FormData();
-        data.append('move', target.dataset.move);
-        data.append('game', this.state.game.guid);
+        data.append('form[move]', target.dataset.move);
+        data.append('form[game]', this.state.game.guid);
 
-        this.setState({working: true});
-
+        // this.setState({working: true});
+        //
         var player = {
             handle: this.state.player.handle,
             move: target.dataset.move
@@ -88,7 +88,7 @@ class GameComponent extends React.Component {
     }
 
     requestNewGame() {
-        this.setState({working: true});
+        // this.setState({working: true});
         var request = new Request('http://localhost:8080/game', {
             method: 'POST'
         });

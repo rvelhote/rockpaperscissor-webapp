@@ -4,6 +4,21 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  app.game_engine:
+    class: AppBundle\Service\GameEngine
+
+  app.repository:
+    class: Doctrine\ORM\EntityRepository
+    factory: [ '@doctrine.orm.entity_manager', getRepository ]
+    arguments: [ AppBundle:Game ]
+    shared: false
+
+  app.repository.user:
+    parent: app.repository
+    arguments: [ 'AppBundle:Game' ]
+
+  validator.game_guid_exists:
+    class: AppBundle\Validator\Constraints\GameGuidExistsValidator
+    arguments: [ '@app.repository' ]
+    tags:
+      - { name: validator.constraint_validator }

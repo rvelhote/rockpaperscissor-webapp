@@ -28,6 +28,8 @@ use AppBundle\Entity\GameType;
 use AppBundle\Entity\Move;
 use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Result;
+use AppBundle\Form\MakeMoveForm;
+use AppBundle\Service\GameEngine;
 use Balwan\RockPaperScissor\Game\Game;
 use Balwan\RockPaperScissor\Game\Result\Tie;
 use Balwan\RockPaperScissor\Game\Result\Win;
@@ -35,10 +37,12 @@ use Balwan\RockPaperScissor\Player\Player;
 use Balwan\RockPaperScissor\Rule\Rule;
 use Balwan\RockPaperScissor\Rule\RuleCollection;
 use Doctrine\ORM\EntityManager;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -142,6 +146,23 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+
+
+        // create a task and give it some dummy data for this example
+        $task = new MakeMoveForm();
+
+        $form = $this->createFormBuilder($task)
+            ->add('game', TextType::class)
+            ->add('move', TextType::class)
+            ->getForm();
+
+        return $this->render('default/index.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+
+
+
         /** @var \AppBundle\Entity\Game $game */
 //        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
 
@@ -197,6 +218,65 @@ class DefaultController extends Controller
      */
     public function playAction(Request $request)
     {
+        $playerSubmission = new MakeMoveForm();
+
+
+        $form = $this->createFormBuilder($playerSubmission, ['csrf_protection' => false])
+            ->add('game', TextType::class)
+            ->add('move', TextType::class)
+            ->getForm();
+
+        var_dump($request->get('move'), $request->get('game'));
+
+        $form->handleRequest($request);
+
+        var_dump($form->isValid());
+
+        var_dump($form->getData());
+
+        echo $form->getErrors(true)->count();
+
+        foreach($form->getErrors(true) as $e) {
+            echo $e->getMessage();
+        }
+        exit;
+
+
+        try {
+            /** @var \AppBundle\Entity\Game $game */
+            $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['guid' => $request->get('game')]);
+
+            if(is_null($game)) {
+                throw new Exception('Game not found, please try again');
+            }
+
+            /** @var \AppBundle\Entity\MoveType $move */
+            $move = $request->get('move');
+            $move = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy(['slug' => $move]);
+
+            if(is_null($move)) {
+                throw new Exception('The move you specified does not exist');
+            }
+
+            /** @var GameEngine $engine */
+            $engine = $this->get('app.game_engine');
+            $outcome = $engine->play($move->getSlug(), $game->getMovePlayer2()->getSlug(),  $game->getGameType()->getRules());
+
+
+
+
+        } catch(Exception $e) {
+
+        }
+
+
+
+
+
+
+
+//        var_dump($game);
+        exit;
 
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -204,8 +284,7 @@ class DefaultController extends Controller
 //        $em->getConnection()->beginTransaction(); // suspend auto-commit
 //        try {
 
-            /** @var \AppBundle\Entity\Game $game */
-            $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['guid' => $request->get('game')]);
+
 
             /** @var \AppBundle\Entity\Player $player */
             $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
@@ -238,6 +317,10 @@ class DefaultController extends Controller
             $game->setPlayer1($player);
             $game->setMovePlayer1($playerMove);
             $game->setDatePlayed(new \DateTime());
+
+
+
+
 
             $r1 = new Result();
             $r1->setPlayer($game->getPlayer1());
