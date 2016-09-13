@@ -24,8 +24,11 @@
  */
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Result as ResultEntity;
 use Balwan\RockPaperScissor\Game\Game;
 use Balwan\RockPaperScissor\Game\Result\AbstractGameResult;
+use Balwan\RockPaperScissor\Game\Result\Tie;
+use Balwan\RockPaperScissor\Move\Move;
 use Balwan\RockPaperScissor\Player\Player;
 use Balwan\RockPaperScissor\Rule\Rule;
 use Balwan\RockPaperScissor\Rule\RuleCollection;
@@ -37,6 +40,12 @@ use Doctrine\Common\Collections\Collection;
  */
 class GameEngine
 {
+    /**
+     * @param string $move1
+     * @param string $move2
+     * @param Collection $rules
+     * @return AbstractGameResult
+     */
     public function play(string $move1, string $move2, Collection $rules) : AbstractGameResult
     {
         $ruleset = new RuleCollection();
@@ -46,7 +55,12 @@ class GameEngine
             $ruleset->add(new Rule($r->getWinner()->getName(), $r->getLoser()->getName(), $r->getOutcome()));
         }
 
-        $gameGame = new Game(new Player('a', $move1), new Player('b', $move2), $ruleset);
+        $gameGame = new Game(new Move($move1), new Move($move2), $ruleset);
         return $gameGame->result();
+    }
+
+    public function make()
+    {
+
     }
 }

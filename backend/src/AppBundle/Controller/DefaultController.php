@@ -24,28 +24,23 @@
  */
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\GameType;
-use AppBundle\Entity\Move;
-use AppBundle\Entity\MoveType;
-use AppBundle\Entity\Result;
-use AppBundle\Form\MakeMoveForm;
-use AppBundle\Service\GameEngine;
-use Balwan\RockPaperScissor\Game\Game;
+use AppBundle\Entity\Game;
+use AppBundle\Entity\Player;
+use AppBundle\Entity\Result as ResultEntity;
 use Balwan\RockPaperScissor\Game\Result\Tie;
-use Balwan\RockPaperScissor\Game\Result\Win;
-use Balwan\RockPaperScissor\Player\Player;
-use Balwan\RockPaperScissor\Rule\Rule;
-use Balwan\RockPaperScissor\Rule\RuleCollection;
-use Doctrine\ORM\EntityManager;
+use DateTime;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use AppBundle\Entity\GameType;
+use AppBundle\Entity\MoveType;
+use AppBundle\Form\MakeMoveForm;
+use AppBundle\Service\GameEngine;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
 {
@@ -58,7 +53,7 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $moves = ['Rock', 'Paper', 'Scissors'];
-        foreach($moves as $move) {
+        foreach ($moves as $move) {
             $moveType = new MoveType();
             $moveType->setName($move);
             $moveType->setSlug(mb_strtolower($move));
@@ -72,9 +67,9 @@ class DefaultController extends Controller
         $em->persist($player1);
         $em->flush();
 
-        for($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $player = new \AppBundle\Entity\Player();
-            $player->setHandle("@abardadyn <".$i.">");
+            $player->setHandle("@abardadyn <" . $i . ">");
 
             $em->persist($player);
             $em->flush();
@@ -122,7 +117,7 @@ class DefaultController extends Controller
 
 //        var_dump($moves[0]->getName());exit;
 
-        for($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $unique = Uuid::uuid4()->toString();
 
             $game = new \AppBundle\Entity\Game();
@@ -159,8 +154,6 @@ class DefaultController extends Controller
         return $this->render('default/index.html.twig', array(
             'form' => $form->createView(),
         ));
-
-
 
 
         /** @var \AppBundle\Entity\Game $game */
@@ -201,7 +194,7 @@ class DefaultController extends Controller
 //        // actually executes the queries (i.e. the INSERT query)
 //        $em->flush();
 
-        return new Response('');
+//        return new Response('');
     }
 
     /**
@@ -211,174 +204,193 @@ class DefaultController extends Controller
      * @param Request $request
      * @return JsonResponse
      *
-     * TODO Validate if the move that was sent is correct for this game
-     * TODO Validate if the move actually exists
-     * TODO Validate that the game exists and is playable
-     * TODO The database has to contain the rules so we can build and feed the RuleCollection
      */
     public function playAction(Request $request)
     {
-        $playerSubmission = new MakeMoveForm();
-
-
-        $form = $this->createFormBuilder($playerSubmission, ['csrf_protection' => false])
+        $options = ['csrf_protection' => false];
+        $playerSubmissionForm = $this->createFormBuilder(null, $options)
             ->add('game', TextType::class)
             ->add('move', TextType::class)
             ->getForm();
 
-        var_dump($request->get('move'), $request->get('game'));
+        $playerSubmissionForm->handleRequest($request);
 
-        $form->handleRequest($request);
-
-        var_dump($form->isValid());
-
-        var_dump($form->getData());
-
-        echo $form->getErrors(true)->count();
-
-        foreach($form->getErrors(true) as $e) {
-            echo $e->getMessage();
-        }
-        exit;
-
-
-        try {
-            /** @var \AppBundle\Entity\Game $game */
-            $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['guid' => $request->get('game')]);
-
-            if(is_null($game)) {
-                throw new Exception('Game not found, please try again');
+        if (!$playerSubmissionForm->isValid()) {
+            foreach ($playerSubmissionForm->getErrors(true) as $e) {
+                echo $e->getMessage();
             }
-
-            /** @var \AppBundle\Entity\MoveType $move */
-            $move = $request->get('move');
-            $move = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy(['slug' => $move]);
-
-            if(is_null($move)) {
-                throw new Exception('The move you specified does not exist');
-            }
-
-            /** @var GameEngine $engine */
-            $engine = $this->get('app.game_engine');
-            $outcome = $engine->play($move->getSlug(), $game->getMovePlayer2()->getSlug(),  $game->getGameType()->getRules());
-
-
-
-
-        } catch(Exception $e) {
-
+            exit;
         }
 
+        /** @var MakeMoveForm $playerSubmission */
+        $playerSubmission = $playerSubmissionForm->getData();
+
+        /** @var Player $player */
+        // TODO Maintain session state instead of hardcoding!
+        $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+
+        /** @var Game $game */
+        $criteria = ['guid' => $playerSubmission['game']];
+        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy($criteria);
+
+        /** @var MoveType $move */
+        $criteria = ['slug' => $playerSubmission['move']];
+        $move = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy($criteria);
+
+        /** @var GameEngine $engine */
+        $engine = $this->get('app.game_engine');
+        $result = $engine->play($move->getSlug(), $game->getMovePlayer2()->getSlug(), $game->getGameType()->getRules());
 
 
+        // Update the game definition with the data of the player that played the game
+        $game->setPlayer1($player);
+        $game->setMovePlayer1($move);
+        $game->setDatePlayed(new DateTime());
 
+        $r1 = new ResultEntity();
+        $r1->setPlayer($game->getPlayer1());
 
+        $r2 = new ResultEntity();
+        $r2->setPlayer($game->getPlayer2());
 
-
-//        var_dump($game);
-        exit;
-
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
-//        $em->getConnection()->beginTransaction(); // suspend auto-commit
-//        try {
-
-
-
-            /** @var \AppBundle\Entity\Player $player */
-            $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
-
-            /** @var MoveType $playerMove */
-            $playerMove = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy(['slug' => $request->get('move')]);
-
-            if (is_null($game)) {
-                die('Oh nooo ;)');
-            }
-
-            $player1 = new Player($player->getHandle(), $playerMove->getSlug());
-            $player2 = new Player($game->getPlayer2()->getHandle(), $game->getMovePlayer2()->getSlug());
-
-            $rules = new RuleCollection();
-//        $rules->add(new Rule('Paper', 'Rock', 'Covers'));
-//        $rules->add(new Rule('Scissors', 'Paper', 'Cuts'));
-//        $rules->add(new Rule('Rock', 'Scissors', 'Smashes'));
-
-            $databaseRules = $game->getGameType()->getRules();
-
-            /** @var \AppBundle\Entity\Rule $r */
-            foreach ($databaseRules as $r) {
-                $rules->add(new Rule($r->getWinner()->getName(), $r->getLoser()->getName(), $r->getOutcome()));
-            }
-
-            $gameGame = new Game($player1, $player2, $rules);
-            $gameResult = $gameGame->result();
-
-            $game->setPlayer1($player);
-            $game->setMovePlayer1($playerMove);
-            $game->setDatePlayed(new \DateTime());
-
-
-
-
-
-            $r1 = new Result();
-            $r1->setPlayer($game->getPlayer1());
-
-            $r2 = new Result();
-            $r2->setPlayer($game->getPlayer2());
-
-            if ($gameResult instanceof Tie) {
-                $r1->setDraw(true);
-                $r2->setDraw(true);
+        if ($result instanceof Tie) {
+            $r1->setDraw(true);
+            $r2->setDraw(true);
+        } else {
+            if ($result->getWinner()->getPlay() === $move->getSlug()) {
+                $r1->setWin(true);
+                $r2->setLose(true);
             } else {
-                if ($gameResult->getWinner() == $player1) {
-                    $r1->setWin(true);
-                    $r2->setLose(true);
-                } else {
-                    $r1->setLose(true);
-                    $r2->setWin(true);
-                }
+                $r1->setLose(true);
+                $r2->setWin(true);
             }
+        }
 
-            $game->addResult($r1);
-            $game->addResult($r2);
+        $game->addResult($r1);
+        $game->addResult($r2);
 
-//            $em->persist($r1);
-//            $em->persist($r2);
-            $em->persist($game);
-            $em->flush();
-
-            $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
-
-
-
-
-
-//            $em->getConnection()->commit();
-//        } catch (\Exception $e) {
-//            $em->getConnection()->rollBack();
-//            throw $e;
-//        }
-
+        $this->getDoctrine()->getEntityManager()->persist($game);
+        $this->getDoctrine()->getEntityManager()->flush();
 
         $newGame = [
             'game' => $this->getNewGame(),
             'result' => [
                 'opponent' => $game->getPlayer2()->getHandle(),
-                'move' => $player2->getPlay(),
-                'winner' => ($gameResult instanceof Tie) ? 0 : ($gameResult->getWinner() == $player1 ? 1 : 2),
-                'outcome' => ($gameResult instanceof Tie) ? 'Tie' : $gameResult->getRule()->getText(),
+                'move' => $game->getMovePlayer2()->getName(),
+                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
+                'tied' => ($result instanceof Tie),
+                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
             ],
-            'stats' => [
-                'win' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'win' => 1])),
-                'draw' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'draw' => 1])),
-                'lose' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'lose' => 1])),
-            ]
+            'stats' => $this->getStats($player->getId()),
         ];
 
-
         return new JsonResponse($newGame);
+
+//
+////        var_dump($game);
+//        exit;
+//
+//        /** @var EntityManager $em */
+//        $em = $this->getDoctrine()->getManager();
+//
+////        $em->getConnection()->beginTransaction(); // suspend auto-commit
+////        try {
+//
+//
+//
+//            /** @var \AppBundle\Entity\Player $player */
+//            $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+//
+//            /** @var MoveType $playerMove */
+//            $playerMove = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy(['slug' => $request->get('move')]);
+//
+//            if (is_null($game)) {
+//                die('Oh nooo ;)');
+//            }
+//
+//            $player1 = new Player($player->getHandle(), $playerMove->getSlug());
+//            $player2 = new Player($game->getPlayer2()->getHandle(), $game->getMovePlayer2()->getSlug());
+//
+//            $rules = new RuleCollection();
+////        $rules->add(new Rule('Paper', 'Rock', 'Covers'));
+////        $rules->add(new Rule('Scissors', 'Paper', 'Cuts'));
+////        $rules->add(new Rule('Rock', 'Scissors', 'Smashes'));
+//
+//            $databaseRules = $game->getGameType()->getRules();
+//
+//            /** @var \AppBundle\Entity\Rule $r */
+//            foreach ($databaseRules as $r) {
+//                $rules->add(new Rule($r->getWinner()->getName(), $r->getLoser()->getName(), $r->getOutcome()));
+//            }
+//
+//            $gameGame = new Game($player1, $player2, $rules);
+//            $gameResult = $gameGame->result();
+//
+//            $game->setPlayer1($player);
+//            $game->setMovePlayer1($playerMove);
+//            $game->setDatePlayed(new \DateTime());
+//
+//
+//
+//
+//
+//            $r1 = new Result();
+//            $r1->setPlayer($game->getPlayer1());
+//
+//            $r2 = new Result();
+//            $r2->setPlayer($game->getPlayer2());
+//
+//            if ($gameResult instanceof Tie) {
+//                $r1->setDraw(true);
+//                $r2->setDraw(true);
+//            } else {
+//                if ($gameResult->getWinner() == $player1) {
+//                    $r1->setWin(true);
+//                    $r2->setLose(true);
+//                } else {
+//                    $r1->setLose(true);
+//                    $r2->setWin(true);
+//                }
+//            }
+//
+//            $game->addResult($r1);
+//            $game->addResult($r2);
+//
+////            $em->persist($r1);
+////            $em->persist($r2);
+//            $em->persist($game);
+//            $em->flush();
+//
+//            $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
+//
+//
+//
+//
+//
+////            $em->getConnection()->commit();
+////        } catch (\Exception $e) {
+////            $em->getConnection()->rollBack();
+////            throw $e;
+////        }
+//
+//
+//        $newGame = [
+//            'game' => $this->getNewGame(),
+//            'result' => [
+//                'opponent' => $game->getPlayer2()->getHandle(),
+//                'move' => $player2->getPlay(),
+//                'winner' => ($gameResult instanceof Tie) ? 0 : ($gameResult->getWinner() == $player1 ? 1 : 2),
+//                'outcome' => ($gameResult instanceof Tie) ? 'Tie' : $gameResult->getRule()->getText(),
+//            ],
+//            'stats' => [
+//                'win' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'win' => 1])),
+//                'draw' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'draw' => 1])),
+//                'lose' => count($resultsRepo->findBy(['player' => $game->getPlayer1()->getId(), 'lose' => 1])),
+//            ]
+//        ];
+//
+//
+//        return new JsonResponse($newGame);
     }
 
     /**
@@ -390,21 +402,30 @@ class DefaultController extends Controller
      */
     public function gameAction(Request $request)
     {
-        $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
-
         /** @var \AppBundle\Entity\Player $player */
         $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
 
         $newGame = [
             'game' => $this->getNewGame(),
-            'stats' => [
-                'win' => count($resultsRepo->findBy(['player' => $player->getId(), 'win' => 1])),
-                'draw' => count($resultsRepo->findBy(['player' => $player->getId(), 'draw' => 1])),
-                'lose' => count($resultsRepo->findBy(['player' => $player->getId(), 'lose' => 1])),
-            ]
+            'stats' => $this->getStats($player->getId()),
         ];
 
         return new JsonResponse($newGame);
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    private function getStats(int $id)
+    {
+        $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
+
+        return [
+            'win' => count($resultsRepo->findBy(['player' => $id, 'win' => 1])),
+            'draw' => count($resultsRepo->findBy(['player' => $id, 'draw' => 1])),
+            'lose' => count($resultsRepo->findBy(['player' => $id, 'lose' => 1])),
+        ];
     }
 
     /**
@@ -416,16 +437,14 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Entity\Game $game */
-        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['locked' =>  null]);
-        $game->setLocked(true);
-        $em->persist($game);
-        $em->flush();
+        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['locked' => null]);
+
 
 
 //        /** @var \AppBundle\Entity\Game $game */
 //        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
 
-        if(is_null($game)) {
+        if (is_null($game)) {
             $game = [
                 'guid' => 'game over',
                 'opponent' => [
@@ -438,6 +457,10 @@ class DefaultController extends Controller
             return $game;
         }
 
+        $game->setLocked(true);
+        $em->persist($game);
+        $em->flush();
+
 //        /** @var \AppBundle\Entity\Game $entity */
 //        $entity = $em->find('AppBundle\Entity\Game', $game->getId(), \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
 //
@@ -445,7 +468,7 @@ class DefaultController extends Controller
 //
 //        $em->persist($entity);
 
-        $moves = array_map(function($move) {
+        $moves = array_map(function ($move) {
             /** @var MoveType $move */
             return ['name' => $move->getName(), 'move' => $move->getSlug()];
         }, $game->getGameType()->getMoveTypes()->toArray());
