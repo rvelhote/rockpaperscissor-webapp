@@ -9,16 +9,15 @@ services:
 
   app.repository:
     class: Doctrine\ORM\EntityRepository
-    factory: [ '@doctrine.orm.entity_manager', getRepository ]
-    arguments: [ AppBundle:Game ]
+    factory: ['@doctrine.orm.entity_manager', getRepository]
     shared: false
 
-  app.repository.user:
+  app.repository.game:
     parent: app.repository
-    arguments: [ 'AppBundle:Game' ]
+    arguments: ['AppBundle:Game']
 
   validator.game_guid_exists:
     class: AppBundle\Validator\Constraints\GameGuidExistsValidator
-    arguments: [ '@app.repository' ]
+    arguments: ['@app.repository.game']
     tags:
       - { name: validator.constraint_validator }
