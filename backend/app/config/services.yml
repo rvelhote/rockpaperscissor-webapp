@@ -16,8 +16,18 @@ services:
     parent: app.repository
     arguments: ['AppBundle:Game']
 
+  app.repository.move_type:
+    parent: app.repository
+    arguments: ['AppBundle:MoveType']
+
   validator.game_guid_exists:
     class: AppBundle\Validator\Constraints\GameGuidExistsValidator
     arguments: ['@app.repository.game']
+    tags:
+      - { name: validator.constraint_validator }
+
+  validator.move_exists:
+    class: AppBundle\Validator\Constraints\MoveExistsValidator
+    arguments: ['@app.repository.move_type']
     tags:
       - { name: validator.constraint_validator }
