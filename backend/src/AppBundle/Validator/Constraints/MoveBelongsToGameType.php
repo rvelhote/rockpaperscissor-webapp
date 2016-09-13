@@ -22,22 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-namespace AppBundle\Form;
+namespace AppBundle\Validator\Constraints;
+
+use Symfony\Component\Validator\Constraint;
 
 /**
- * Class MakeMoveForm
- * @package AppBundle\Form
- * @AppBundle\Validator\Constraints\MoveBelongsToGameType()
+ * Class MoveBelongsToGameType
+ * @package AppBundle\Validator\Constraints
+ * @Annotation
  */
-class MakeMoveForm
+class MoveBelongsToGameType extends Constraint
 {
     /**
-     * @AppBundle\Validator\Constraints\GameGuidExists()
+     * @var string The validation string for the validator that checks if the game GUID exists.
      */
-    public $game;
+    public $message = 'The move %move% does not belong to the game type %type%. Would you kindly try again?';
 
     /**
-     * @AppBundle\Validator\Constraints\MoveExists()
+     * @return string
      */
-    public $move;
+    public function getTargets()
+    {
+        return self::CLASS_CONSTRAINT;
+    }
 }

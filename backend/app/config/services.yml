@@ -31,3 +31,9 @@ services:
     arguments: ['@app.repository.move_type']
     tags:
       - { name: validator.constraint_validator }
+
+  validator.move_belongs_to_game_type:
+    class: AppBundle\Validator\Constraints\MoveBelongsToGameTypeValidator
+    arguments: ['@app.repository.game', '@app.repository.move_type']
+    tags:
+      - { name: validator.constraint_validator }
