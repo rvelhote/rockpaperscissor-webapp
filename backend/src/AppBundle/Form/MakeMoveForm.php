@@ -24,6 +24,8 @@
  */
 namespace AppBundle\Form;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Class MakeMoveForm
  * @package AppBundle\Form
@@ -32,12 +34,48 @@ namespace AppBundle\Form;
 class MakeMoveForm
 {
     /**
+     * @Assert\NotBlank()
      * @AppBundle\Validator\Constraints\GameGuidExists()
+     * @var string
      */
-    public $game;
+    protected $game = '';
 
     /**
+     * @Assert\NotBlank()
      * @AppBundle\Validator\Constraints\MoveExists()
+     * @var string
      */
-    public $move;
+    protected $move = '';
+
+    /**
+     * @return string
+     */
+    public function getGame()
+    {
+        return $this->game;
+    }
+
+    /**
+     * @param string $game
+     */
+    public function setGame($game)
+    {
+        $this->game = $game;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMove()
+    {
+        return $this->move;
+    }
+
+    /**
+     * @param string $move
+     */
+    public function setMove($move)
+    {
+        $this->move = $move;
+    }
 }

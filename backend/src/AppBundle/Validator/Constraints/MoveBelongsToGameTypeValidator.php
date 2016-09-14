@@ -64,22 +64,22 @@ class MoveBelongsToGameTypeValidator extends ConstraintValidator
      * Checks if the passed value is valid.
      * Verify that the game GUID exists in the database and is playable.
      *
-     * @param MakeMoveForm $value The value that should be validated.
+     * @param MakeMoveForm $form The value that should be validated.
      * @param Constraint $constraint The constraint for the validation.
      *
      * @throws \Exception
      *
      * TODO Replace by a query instead of looping and getting things. Much easier ;)
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($form, Constraint $constraint)
     {
         $moveTypeExists = false;
 
         /** @var Game $game */
-        $game = $this->gameRepository->findOneBy(['guid' => $value->game]);
+        $game = $this->gameRepository->findOneBy(['guid' => $form->getGame()]);
 
         /** @var MoveType $move */
-        $move = $this->moveTypeRepository->findOneBy(['slug' => $value->move]);
+        $move = $this->moveTypeRepository->findOneBy(['slug' => $form->getMove()]);
 
         if(!is_null($game)) {
             $moveTypes = $game->getGameType()->getMoveTypes();
@@ -97,7 +97,7 @@ class MoveBelongsToGameTypeValidator extends ConstraintValidator
         if(!is_null($game) && !$moveTypeExists) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('%move%', mb_strtoupper($value->move))
+                ->setParameter('%move%', mb_strtoupper($form->getMove()))
                 ->setParameter('%type%', $game->getGameType()->getName())
                 ->addViolation();
         }

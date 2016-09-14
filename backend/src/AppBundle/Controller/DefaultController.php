@@ -207,8 +207,10 @@ class DefaultController extends Controller
      */
     public function playAction(Request $request)
     {
+        $playerSubmission = new MakeMoveForm();
+
         $options = ['csrf_protection' => false];
-        $playerSubmissionForm = $this->createFormBuilder(null, $options)
+        $playerSubmissionForm = $this->createFormBuilder($playerSubmission, $options)
             ->add('game', TextType::class)
             ->add('move', TextType::class)
             ->getForm();
@@ -216,8 +218,9 @@ class DefaultController extends Controller
         $playerSubmissionForm->handleRequest($request);
 
         if (!$playerSubmissionForm->isValid()) {
+            var_dump($playerSubmissionForm->getErrors(true)->count());
             foreach ($playerSubmissionForm->getErrors(true) as $e) {
-                echo $e->getMessage();
+                var_dump($e->getMessage());
             }
             exit;
         }
@@ -230,11 +233,11 @@ class DefaultController extends Controller
         $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
 
         /** @var Game $game */
-        $criteria = ['guid' => $playerSubmission['game']];
+        $criteria = ['guid' => $playerSubmission->getGame()];
         $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy($criteria);
 
         /** @var MoveType $move */
-        $criteria = ['slug' => $playerSubmission['move']];
+        $criteria = ['slug' => $playerSubmission->getMove()];
         $move = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy($criteria);
 
         /** @var GameEngine $engine */
