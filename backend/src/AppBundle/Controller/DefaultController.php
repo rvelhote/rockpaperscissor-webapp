@@ -27,6 +27,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Game;
 use AppBundle\Entity\Player;
 use AppBundle\Entity\Result as ResultEntity;
+use AppBundle\Repository\GameRepository;
+use AppBundle\Service\StatsService;
 use Balwan\RockPaperScissor\Game\Result\Tie;
 use DateTime;
 use Exception;
@@ -42,6 +44,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class DefaultController
+ * @package AppBundle\Controller
+ *
+ */
 class DefaultController extends Controller
 {
     /**
@@ -141,60 +148,6 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-
-
-        // create a task and give it some dummy data for this example
-        $task = new MakeMoveForm();
-
-        $form = $this->createFormBuilder($task)
-            ->add('game', TextType::class)
-            ->add('move', TextType::class)
-            ->getForm();
-
-        return $this->render('default/index.html.twig', array(
-            'form' => $form->createView(),
-        ));
-
-
-        /** @var \AppBundle\Entity\Game $game */
-//        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
-
-
-//        $repository = $this->getDoctrine()->getRepository('AppBundle:Game');
-//
-//        $product = $repository->find(1);
-//
-//        var_dump($product->getGameType());exit;
-
-
-//        $game = new \AppBundle\Entity\Game();
-//        $game->setUuid(uniqid());
-//        $game->setGameType(55);
-//        $game->setDateCreated(new \DateTime());
-//
-//
-////
-////        $game = new GameType();
-////        $game->setName('Rock Paper Scissors');
-////        $game->setDescription('RPS');
-////        $game->setIsActive(true);
-////
-////
-//////        $moveType = new MoveType();
-//////        $moveType->setName('Scissors');
-//////        $moveType->setSlug('scissors');
-//////        $moveType->setIsActive(true);
-//////        $moveType->setDateCreated(new \DateTime());
-//////
-//        $em = $this->getDoctrine()->getManager();
-//
-//        // tells Doctrine you want to (eventually) save the Product (no queries yet)
-//        $em->persist($game);
-//
-//        // actually executes the queries (i.e. the INSERT query)
-//        $em->flush();
-
-//        return new Response('');
     }
 
     /**
@@ -408,27 +361,15 @@ class DefaultController extends Controller
         /** @var \AppBundle\Entity\Player $player */
         $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
 
+        /** @var StatsService $statistics */
+        $statistics = $this->get('app.service.stats');
+
         $newGame = [
             'game' => $this->getNewGame(),
-            'stats' => $this->getStats($player->getId()),
+            'stats' => $statistics->all($player->getId()),
         ];
 
         return new JsonResponse($newGame);
-    }
-
-    /**
-     * @param int $id
-     * @return array
-     */
-    private function getStats(int $id)
-    {
-        $resultsRepo = $this->getDoctrine()->getRepository('AppBundle:Result');
-
-        return [
-            'win' => count($resultsRepo->findBy(['player' => $id, 'win' => 1])),
-            'draw' => count($resultsRepo->findBy(['player' => $id, 'draw' => 1])),
-            'lose' => count($resultsRepo->findBy(['player' => $id, 'lose' => 1])),
-        ];
     }
 
     /**

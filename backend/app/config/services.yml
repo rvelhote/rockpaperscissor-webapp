@@ -7,6 +7,10 @@ services:
   app.game_engine:
     class: AppBundle\Service\GameEngine
 
+  app.service.stats:
+    class: AppBundle\Service\StatsService
+    arguments: ['@app.repository.result']
+
   app.repository:
     class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.entity_manager', getRepository]
@@ -16,9 +20,17 @@ services:
     parent: app.repository
     arguments: ['AppBundle:Game']
 
+  app.repository.player:
+    parent: app.repository
+    arguments: ['AppBundle:Player']
+
   app.repository.move_type:
     parent: app.repository
     arguments: ['AppBundle:MoveType']
+
+  app.repository.result:
+    parent: app.repository
+    arguments: ['AppBundle:Result']
 
   validator.game_guid_exists:
     class: AppBundle\Validator\Constraints\GameGuidExistsValidator
