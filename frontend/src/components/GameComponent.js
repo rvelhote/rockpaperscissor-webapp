@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-'use strict';
+// 'use strict';
 
 import React from 'react';
 import Player from './PlayerComponent';
 import Move from './MoveComponent';
 import Stats from './StatsComponent';
 
-require('styles/Game.css');
+import '../styles/Game.css';
 
 class GameComponent extends React.Component {
     constructor(props) {

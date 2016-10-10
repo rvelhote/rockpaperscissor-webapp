@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-'use strict';
+// 'use strict';
 
 import React from 'react';
 
-require('styles//Player.css');
+require('../styles//Player.css');
 
 let defaultPerson = require('../images/ic_face_black_48dp_2x.png');
 

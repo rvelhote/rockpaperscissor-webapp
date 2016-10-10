@@ -1,8 +1,8 @@
-'use strict';
+// 'use strict';
 
 import React from 'react';
 
-require('styles//Stats.css');
+require('../styles/Stats.css');
 
 let StatsComponent = (props) => (
   <div className="stats">
