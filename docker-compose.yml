@@ -12,7 +12,7 @@ services:
     container_name: rockpaperscissor-webapp-react
     image: rockpaperscissor-webapp-react
     ports:
-      - "8000:8000"
+      - "3000:3000"
     volumes:
       - ./frontend:/opt/application
 

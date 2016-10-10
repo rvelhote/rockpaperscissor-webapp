@@ -26,4 +26,4 @@ ENV DEBIAN_FRONTEND noninteractive
 WORKDIR "/opt/application"
 
 EXPOSE 8000
-ENTRYPOINT ["npm", "run", "serve"]
+ENTRYPOINT ["npm", "start"]
