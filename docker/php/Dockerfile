@@ -23,10 +23,11 @@ FROM ubuntu:xenial
 MAINTAINER Ricardo Velhote "rvelhote+github@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get -y dist-upgrade && \
-    apt-get install -y --no-install-recommends php7.0-cli php7.0-xml php7.0-mbstring php7.0-bz2 php7.0-zip php-xdebug ca-certificates php7.0-intl php7.0-mysql
+
+RUN apt-get update
+RUN apt-get -y upgrade
+RUN apt-get -y dist-upgrade
+RUN apt-get install -y --no-install-recommends php7.0-cli php7.0-fpm php7.0-xml php7.0-mbstring php7.0-bz2 php7.0-zip php-xdebug ca-certificates php7.0-intl php7.0-mysql
 
 RUN php -r "file_put_contents('symfony', file_get_contents('https://symfony.com/installer'));" && \
     mv symfony /usr/local/bin/symfony && \
@@ -38,5 +39,12 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     mv composer.phar /usr/local/bin/composer && \
     chmod a+x /usr/local/bin/composer
 
-EXPOSE 8080
-ENTRYPOINT ["php", "/opt/application/bin/console", "server:run", "0.0.0.0:8080"]
+# Overidden configuration files
+COPY conf /
+
+# Create a user to match the GUID of our user
+# FIXME Will only work if the machine has a single user. Fix the permissions properly.
+RUN useradd application
+
+EXPOSE 9000
+ENTRYPOINT ["php-fpm7.0", "--nodaemonize"]
