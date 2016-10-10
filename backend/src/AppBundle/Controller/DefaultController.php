@@ -28,6 +28,7 @@ use AppBundle\Entity\Game;
 use AppBundle\Entity\Player;
 use AppBundle\Entity\Result as ResultEntity;
 use AppBundle\Repository\GameRepository;
+use AppBundle\Service\GameService;
 use AppBundle\Service\StatsService;
 use Balwan\RockPaperScissor\Game\Result\Tie;
 use DateTime;
@@ -361,11 +362,14 @@ class DefaultController extends Controller
         /** @var \AppBundle\Entity\Player $player */
         $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
 
+        /** @var GameService $g */
+        $game = $this->get('app.service.game');
+
         /** @var StatsService $statistics */
         $statistics = $this->get('app.service.stats');
 
         $newGame = [
-            'game' => $this->getNewGame(),
+            'game' => $game->getGame(),
             'stats' => $statistics->all($player->getId()),
         ];
 
@@ -378,32 +382,45 @@ class DefaultController extends Controller
      */
     private function getNewGame()
     {
-        $em = $this->getDoctrine()->getManager();
+
+
+
+
+
+
+
+
+//        $gg = $g->getPlayableGame();
+
+//        var_dump($g->getGuid());exit;
+
+
+//        $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Entity\Game $game */
-        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['locked' => null]);
+//        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['locked' => null]);
 
 
 
 //        /** @var \AppBundle\Entity\Game $game */
 //        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy(['datePlayed' => null]);
 
-        if (is_null($game)) {
-            $game = [
-                'guid' => 'game over',
-                'opponent' => [
-                    'handle' => 'game over',
-                    'picture' => ''
-                ],
-                'moves' => [],
-                'gameType' => ['name' => 'game over']
-            ];
-            return $game;
-        }
+//        if (is_null($game)) {
+//            $game = [
+//                'guid' => 'game over',
+//                'opponent' => [
+//                    'handle' => 'game over',
+//                    'picture' => ''
+//                ],
+//                'moves' => [],
+//                'gameType' => ['name' => 'game over']
+//            ];
+//            return $game;
+//        }
 
-        $game->setLocked(true);
-        $em->persist($game);
-        $em->flush();
+//        $game->setLocked(true);
+//        $em->persist($game);
+//        $em->flush();
 
 //        /** @var \AppBundle\Entity\Game $entity */
 //        $entity = $em->find('AppBundle\Entity\Game', $game->getId(), \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
@@ -412,21 +429,6 @@ class DefaultController extends Controller
 //
 //        $em->persist($entity);
 
-        $moves = array_map(function ($move) {
-            /** @var MoveType $move */
-            return ['name' => $move->getName(), 'move' => $move->getSlug()];
-        }, $game->getGameType()->getMoveTypes()->toArray());
 
-        $game = [
-            'guid' => $game->getGuid(),
-            'opponent' => [
-                'handle' => $game->getPlayer2()->getHandle(),
-                'picture' => ''
-            ],
-            'moves' => $moves,
-            'gameType' => ['name' => $game->getGameType()->getName()]
-        ];
-
-        return $game;
     }
 }

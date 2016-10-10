@@ -11,6 +11,10 @@ services:
     class: AppBundle\Service\StatsService
     arguments: ['@app.repository.result']
 
+  app.service.game:
+    class: AppBundle\Service\GameService
+    arguments: ['@app.repository.game', '@doctrine.orm.entity_manager']
+
   app.repository:
     class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.entity_manager', getRepository]

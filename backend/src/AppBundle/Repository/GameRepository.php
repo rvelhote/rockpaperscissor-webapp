@@ -10,4 +10,8 @@ namespace AppBundle\Repository;
  */
 class GameRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByGuid(string $guid)
+    {
+
+    }
 }
