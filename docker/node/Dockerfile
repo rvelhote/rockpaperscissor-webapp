@@ -25,5 +25,9 @@ MAINTAINER Ricardo Velhote "rvelhote+github@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 WORKDIR "/opt/application"
 
-EXPOSE 8000
+# Create a user to match the GUID of our user
+# FIXME Will only work if the machine has a single user. Fix the permissions properly.
+RUN useradd application
+
+EXPOSE 3000
 ENTRYPOINT ["npm", "start"]
