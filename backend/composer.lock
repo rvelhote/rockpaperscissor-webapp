@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "246fca9dcde315b7d917078d747fd470",
-    "content-hash": "c1646a4eb02f63742c7dda8803072207",
+    "hash": "a7373aa0ac0632a61007d3c52eb5f47b",
+    "content-hash": "248744b8d3838fbfa30104e605bed9fb",
     "packages": [
         {
             "name": "balwan/rock-paper-scissor",
