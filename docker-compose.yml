@@ -25,6 +25,7 @@ services:
     image: rockpaperscissor-webapp-php
     ports:
       - "9000:9000"
+      - "22:22"
     volumes:
       - ./backend:/opt/application
     links:
