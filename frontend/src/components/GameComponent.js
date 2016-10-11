@@ -77,7 +77,7 @@ class GameComponent extends React.Component {
             move: target.dataset.move
         };
 
-        var request = new Request('http://localhost:8080/play', {
+        var request = new Request('http://localhost/play', {
             method: 'POST',
             body: data
         });
@@ -89,7 +89,7 @@ class GameComponent extends React.Component {
 
     requestNewGame() {
         // this.setState({working: true});
-        var request = new Request('http://localhost:8080/game', {
+        var request = new Request('http://localhost/game', {
             method: 'POST'
         });
         return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, game: response.game }));
