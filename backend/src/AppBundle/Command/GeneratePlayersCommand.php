@@ -30,20 +30,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CreateUserCommand
+ * Class GeneratePlayersCommand
  * @package AppBundle\Command
  */
-class GenerateGamesCommand extends ContainerAwareCommand
+class GeneratePlayersCommand extends ContainerAwareCommand
 {
     /**
      *
      */
     protected function configure()
     {
-        $this->setName('rps:generate-games');
-        $this->setDescription('Generates new RPS games.');
-        $this->setHelp('Generate random games for testing purposes...');
-        $this->addArgument('gameType', InputArgument::REQUIRED, 'Choose a game type to generate. RPS or RPSLS');
+        $this->setName('rps:generate-players');
+        $this->setDescription('Generates a bunch of players to to use to assign to games.');
+        $this->setHelp('This command will only generate the players. It does not allow you to create a single one.');
+        $this->addArgument('count', InputArgument::OPTIONAL, 'How many players to create?');
     }
 
     /**
@@ -53,9 +53,6 @@ class GenerateGamesCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $g = $this->getContainer()->get('app.service.game');
-        $game = $g->getGame();
-
-        $output->writeln($game['guid']);
+        $output->writeln('Something?');
     }
 }

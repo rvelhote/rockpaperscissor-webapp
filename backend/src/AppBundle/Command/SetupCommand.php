@@ -25,25 +25,25 @@
 namespace AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CreateUserCommand
+ * Class GeneratePlayersCommand
  * @package AppBundle\Command
  */
-class GenerateGamesCommand extends ContainerAwareCommand
+class SetupCommand extends ContainerAwareCommand
 {
     /**
      *
      */
     protected function configure()
     {
-        $this->setName('rps:generate-games');
-        $this->setDescription('Generates new RPS games.');
-        $this->setHelp('Generate random games for testing purposes...');
-        $this->addArgument('gameType', InputArgument::REQUIRED, 'Choose a game type to generate. RPS or RPSLS');
+        $this->setName('rps:setup');
+        $this->setDescription('Clears the database, generates games, moves, game types, players and rules');
+        $this->setHelp('Use this command to destroy everything and start over.');
     }
 
     /**
@@ -53,9 +53,19 @@ class GenerateGamesCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $g = $this->getContainer()->get('app.service.game');
-        $game = $g->getGame();
+        $dropCommand = $this->getApplication()->find('doctrine:database:drop');
+        $dropCommand->run(new ArrayInput(['--force' => true]), $output);
 
-        $output->writeln($game['guid']);
+        $createCommand = $this->getApplication()->find('doctrine:database:create');
+        $createCommand->run($input, $output);
+
+        $generateCommand = $this->getApplication()->find('doctrine:generate:entities');
+        $generateCommand->run(new ArrayInput(['name' => 'AppBundle']), $output);
+
+        $updateCommand = $this->getApplication()->find('doctrine:schema:update');
+        $updateCommand->run(new ArrayInput(['--force' => true]), $output);
+
+        $generateGameTypeCommand = $this->getApplication()->find('rps:generate-game-type');
+        $generateGameTypeCommand->run($input, $output);
     }
 }
