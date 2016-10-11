@@ -35,7 +35,7 @@ class GameType
     private $moveTypes;
 
     /**
-     * @ORM\OneToMany(targetEntity="Rule", mappedBy="gameType")
+     * @ORM\OneToMany(targetEntity="Rule", mappedBy="gameType", cascade={"persist"})
      *
      */
     private $rules;
