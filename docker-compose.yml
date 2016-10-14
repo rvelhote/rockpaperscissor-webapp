@@ -33,14 +33,16 @@ services:
       - mailhog
 
   db:
-    container_name: rockpaperscissor-webapp-mariadb
-    image: mariadb
+    container_name: rockpaperscissor-webapp-database
+    image: postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - ./.database:/var/lib/mysql
+      - ./.database:/var/lib/postgresql/data
     environment:
-      - MYSQL_ROOT_PASSWORD=r00t
+      - POSTGRES_USER=development
+      - POSTGRES_PASSWORD=x
+      - POSTGRES_DB=rockpaperscissors-webapp
 
   mailhog:
     container_name: rockpaperscissor-webapp-mailhog
