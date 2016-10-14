@@ -89,7 +89,7 @@ class StatsService
         $query = $this->resultRepository->createQueryBuilder('w');
         $query->select($query->expr()->count('w.id'));
 
-        $query->where('w.player = :playerId AND w.'.$type.' = 1')->setParameter('playerId', $id, Type::INTEGER);
+        $query->where('w.player = :playerId AND w.'.$type.' = true')->setParameter('playerId', $id, Type::INTEGER);
         return $query->getQuery()->getSingleScalarResult();
     }
 
