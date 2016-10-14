@@ -24,8 +24,9 @@
  */
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Player;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -36,6 +37,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GeneratePlayersCommand extends ContainerAwareCommand
 {
     /**
+     * @var EntityManager
+     */
+    private $entityManager = null;
+
+    /**
      *
      */
     protected function configure()
@@ -43,7 +49,6 @@ class GeneratePlayersCommand extends ContainerAwareCommand
         $this->setName('rps:generate-players');
         $this->setDescription('Generates a bunch of players to to use to assign to games.');
         $this->setHelp('This command will only generate the players. It does not allow you to create a single one.');
-        $this->addArgument('count', InputArgument::OPTIONAL, 'How many players to create?');
     }
 
     /**
@@ -53,6 +58,49 @@ class GeneratePlayersCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Something?');
+        $this->entityManager = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+
+        $player = $this->createMainPlayer();
+        $output->writeln(sprintf('Main player created with the handle <info>%s</info>', $player->getHandle()));
+
+        $players = $this->createPlayers();
+        $output->writeln(sprintf('<info>%d</info> other players were created', count($players)));
+    }
+
+    /**
+     * Creates the main player. This exists just to ensure that the main player had the ID 1
+     * @return Player The player that was created.
+     * TODO Create session management.
+     */
+    private function createMainPlayer() : Player
+    {
+        $player = new Player();
+        $player->setHandle('@rvelhote');
+
+        $this->entityManager->persist($player);
+        $this->entityManager->flush();
+
+        return $player;
+    }
+
+    /**
+     * Creates a number of random players.
+     * @param int $count The amount of players to create
+     * @return Player[] The list of created players
+     */
+    private function createPlayers(int $count = 20) : array
+    {
+        /** @var Player[] $players */
+        $players = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $players[$i] = new Player();
+            $players[$i]->setHandle('@abardadyn <'.$i.'>');
+
+            $this->entityManager->persist($players[$i]);
+            $this->entityManager->flush();
+        }
+
+        return $players;
     }
 }
