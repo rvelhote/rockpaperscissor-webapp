@@ -68,7 +68,10 @@ class SetupCommand extends ContainerAwareCommand
         $generateGameTypeCommand = $this->getApplication()->find('rps:generate-game-type');
         $generateGameTypeCommand->run($input, $output);
 
-        $generateGameTypeCommand = $this->getApplication()->find('rps:generate-players');
-        $generateGameTypeCommand->run($input, $output);
+        $generatePlayersCommand = $this->getApplication()->find('rps:generate-players');
+        $generatePlayersCommand->run($input, $output);
+
+        $generateGamesCommand = $this->getApplication()->find('rps:generate-games');
+        $generateGamesCommand->run($input, $output);
     }
 }

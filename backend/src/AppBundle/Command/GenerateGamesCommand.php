@@ -24,8 +24,13 @@
  */
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Game;
+use AppBundle\Entity\GameType;
+use AppBundle\Entity\MoveType;
+use AppBundle\Entity\Player;
+use Doctrine\ORM\EntityManager;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -36,6 +41,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GenerateGamesCommand extends ContainerAwareCommand
 {
     /**
+     * @var EntityManager
+     */
+    private $entityManager = null;
+
+    /**
      *
      */
     protected function configure()
@@ -43,7 +53,6 @@ class GenerateGamesCommand extends ContainerAwareCommand
         $this->setName('rps:generate-games');
         $this->setDescription('Generates new RPS games.');
         $this->setHelp('Generate random games for testing purposes...');
-        $this->addArgument('gameType', InputArgument::REQUIRED, 'Choose a game type to generate. RPS or RPSLS');
     }
 
     /**
@@ -53,9 +62,31 @@ class GenerateGamesCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $g = $this->getContainer()->get('app.service.game');
-        $game = $g->getGame();
+        $this->entityManager = $this->getContainer()->get('doctrine.orm.default_entity_manager');
 
-        $output->writeln($game['guid']);
+        /** @var Player[] $players */
+        $players = $this->entityManager->getRepository('AppBundle:Player')->findAll();
+
+        /** @var MoveType[] $moves */
+        $moves = $this->entityManager->getRepository('AppBundle:MoveType')->findAll();
+
+        /** @var GameType[] $gameTypes */
+        $gameTypes = $this->entityManager->getRepository('AppBundle:GameType')->findAll();
+
+        for ($i = 0; $i < 100; $i++) {
+            $unique = Uuid::uuid4()->toString();
+
+            $game = new Game();
+            $game->setGuid($unique);
+
+            $game->setPlayer2($players[random_int(1, count($players) - 1)]);
+            $game->setMovePlayer2($moves[random_int(0, 2)]);
+            $game->setGameType($gameTypes[0]);
+
+            $this->entityManager->persist($game);
+            $this->entityManager->flush();
+        }
+
+        $output->writeln(sprintf('<info>%d</info> games were created!', 100));
     }
 }
