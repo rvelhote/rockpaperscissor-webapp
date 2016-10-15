@@ -54,6 +54,11 @@ class PlayerService
     private $player;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * PlayerService constructor.
      * @param PlayerRepository $repository
      * @param StatsService $stats
@@ -64,7 +69,16 @@ class PlayerService
     {
         $this->repository = $repository;
         $this->stats = $stats;
-        $this->player = $repository->find($session->get('player', 1));
+        $this->session = $session;
+        $this->player = $repository->find($session->get('player', -1));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthenticated() : bool
+    {
+        return !is_null($this->session->get('player'));
     }
 
     /**
