@@ -24,6 +24,7 @@
  */
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Player;
 use AppBundle\Repository\ResultRepository;
 use Doctrine\DBAL\Types\Type;
 use Exception;
@@ -98,7 +99,7 @@ class StatsService
      * @param int $playerId The ID of the player we want to check.
      * @return int
      */
-    public function countWinsFor(int $playerId) : int
+    private function countWinsFor(int $playerId) : int
     {
         return $this->fetch($playerId, self::WIN);
     }
@@ -108,7 +109,7 @@ class StatsService
      * @param int $playerId The ID of the player we want to check.
      * @return int
      */
-    public function countDrawsFor(int $playerId) : int
+    private function countDrawsFor(int $playerId) : int
     {
         return $this->fetch($playerId, self::DRAW);
     }
@@ -118,22 +119,22 @@ class StatsService
      * @param int $playerId The ID of the player we want to check.
      * @return int
      */
-    public function countLosesFor(int $playerId) : int
+    private function countLosesFor(int $playerId) : int
     {
         return $this->fetch($playerId, self::LOSE);
     }
 
     /**
      * Obtains all the statistics (wins, losses and draws) for a player in a neatly packed array.
-     * @param int $playerId The ID of the player we want to check.
+     * @param Player $player The player that we want to check.
      * @return array The compiled statistics of a single player.
      */
-    public function all(int $playerId) : array
+    public function all(Player $player) : array
     {
         return [
-            'win' => $this->countWinsFor($playerId),
-            'draw' => $this->countDrawsFor($playerId),
-            'lose' => $this->countLosesFor($playerId),
+            'win' => $this->countWinsFor($player->getId()),
+            'draw' => $this->countDrawsFor($player->getId()),
+            'lose' => $this->countLosesFor($player->getId()),
         ];
     }
 }

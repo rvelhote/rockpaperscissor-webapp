@@ -29,6 +29,7 @@ use AppBundle\Entity\Player;
 use AppBundle\Entity\Result as ResultEntity;
 use AppBundle\Repository\GameRepository;
 use AppBundle\Service\GameService;
+use AppBundle\Service\PlayerService;
 use AppBundle\Service\StatsService;
 use Balwan\RockPaperScissor\Game\Result\Tie;
 use DateTime;
@@ -43,6 +44,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -165,18 +167,24 @@ class DefaultController extends Controller
      */
     public function gameAction(Request $request)
     {
+
+
+
         /** @var \AppBundle\Entity\Player $player */
-        $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+        //$player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+
+        /** @var PlayerService $player */
+        $player = $this->get('app.service.player');
 
         /** @var GameService $g */
         $game = $this->get('app.service.game');
 
         /** @var StatsService $statistics */
-        $statistics = $this->get('app.service.stats');
+//        $statistics = $this->get('app.service.stats');
 
         $newGame = [
             'game' => $game->getGame(),
-            'stats' => $statistics->all($player->getId()),
+            'stats' => $player->statistics(),
         ];
 
         return new JsonResponse($newGame);

@@ -7,6 +7,10 @@ services:
   app.game_engine:
     class: AppBundle\Service\GameEngine
 
+  app.service.player:
+    class: AppBundle\Service\PlayerService
+    arguments: ['@app.repository.player', '@app.service.stats', '@session']
+
   app.service.stats:
     class: AppBundle\Service\StatsService
     arguments: ['@app.repository.result']
