@@ -24,33 +24,74 @@
  */
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Player;
+use AppBundle\Entity\User;
+use AppBundle\Form\AuthenticationForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * Class DefaultController
+ * Class AuthenticationController
  * @package AppBundle\Controller
  *
  */
 class AuthenticationController extends Controller
 {
-    /**
-     * @Method({"GET"})
-     * @Route("/api/v1/login", name="login")
-     */
-    public function loginAction()
-    {
-        /** @var Session $session */
-        $session = $this->get('session');
-        $session->set('player', 1);
-        return new Response('Logged In');
-    }
+//    /**
+//     * @Method({"POST"})
+//     * @Route("/api/v1/login_check", name="login")
+//     */
+//    public function loginAction()
+//    {
+//        $authenticationForm = new AuthenticationForm();
+//        $options = ['csrf_protection' => false];
+//        $authenticationSubmissionForm = $this->createFormBuilder($authenticationForm, $options)
+//            ->add('_username', TextType::class)
+//            ->add('_password', TextType::class)
+//            ->add('_remember_me', TextType::class)
+//            ->getForm();
+//
+//        //if($authenticationSubmissionForm->isValid()) {
+//            return new JsonResponse(true);
+//        //}
+//
+//        //return new JsonResponse(false, 403);
+//
+//
+//        /** @var Session $session */
+////        $session = $this->get('session');
+////        $session->set('player', 1);
+////        return new JsonResponse(true);
+//    }
+
+//    /**
+//     * @Method({"GET"})
+//     * @Route("/api/v1/register", name="register")
+//     */
+//    public function registerAction(Request $request)
+//    {
+//        $em = $this->get('doctrine')->getManager();
+//        $encoder = $this->container->get('security.password_encoder');
+//
+////        $username = $request->request->get('_username');
+////        $password = $request->request->get('_password');
+//
+//        $user = new Player('rvelhote');
+//        $user->setPassword($encoder->encodePassword($user, 'x'));
+//        $em->persist($user);
+//        $em->flush($user);
+//
+//        return new Response(sprintf('User %s successfully created', $user->getUsername()));
+//    }
 
     /**
-     * @Method({"GET"})
+     * @Method({"POST"})
      * @Route("/api/v1/logout", name="logout")
      */
     public function logoutAction()
@@ -58,6 +99,6 @@ class AuthenticationController extends Controller
         /** @var Session $session */
         $session = $this->get('session');
         $session->invalidate();
-        return new Response('Logged Out');
+        return new JsonResponse(true);
     }
 }

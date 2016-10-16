@@ -70,7 +70,7 @@ class PlayerService
         $this->repository = $repository;
         $this->stats = $stats;
         $this->session = $session;
-        $this->player = $repository->find($session->get('player', -1));
+        $this->player = $repository->find(1);
     }
 
     /**

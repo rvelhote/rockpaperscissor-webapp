@@ -129,8 +129,16 @@ class StatsService
      * @param Player $player The player that we want to check.
      * @return array The compiled statistics of a single player.
      */
-    public function all(Player $player) : array
+    public function all($player) : array
     {
+        if(is_null($player)) {
+            return [
+                'win' => 0,
+                'draw' => 0,
+                'lose' => 0,
+            ];
+        }
+
         return [
             'win' => $this->countWinsFor($player->getId()),
             'draw' => $this->countDrawsFor($player->getId()),

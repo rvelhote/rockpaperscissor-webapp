@@ -70,6 +70,9 @@ class GameComponent extends React.Component {
         data.append('form[move]', target.dataset.move);
         data.append('form[game]', this.state.game.guid);
 
+        var headers = new Headers();
+        headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
+
         // this.setState({working: true});
         //
         var player = {
@@ -77,9 +80,10 @@ class GameComponent extends React.Component {
             move: target.dataset.move
         };
 
-        var request = new Request('http://localhost/play', {
+        var request = new Request('http://localhost/api/v1/play', {
             method: 'POST',
-            body: data
+            body: data,
+            headers: headers
         });
 
         return fetch(request)
@@ -89,10 +93,43 @@ class GameComponent extends React.Component {
 
     requestNewGame() {
         // this.setState({working: true});
-        var request = new Request('http://localhost/game', {
-            method: 'POST'
+
+        var headers = new Headers();
+        headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
+
+        var request = new Request('http://localhost/api/v1/game', {
+            method: 'POST',
+            headers: headers
         });
         return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, game: response.game }));
+    }
+
+    login() {
+        var headers = new Headers();
+        headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
+
+        var data = new FormData();
+        data.append('_username', '@rvelhote');
+        data.append('_password', 'x');
+
+        var request = new Request('http://localhost/api/v1/login', {
+            method: 'POST',
+            body: data,
+            headers: headers
+        });
+        return fetch(request).then(response => response.json()).then(response => {
+
+            window.localStorage.setItem('token', response.token);
+
+        });
+    }
+
+    logout() {
+        var request = new Request('http://localhost/api/v1/logout', {
+            method: 'POST',
+            credentials: 'same-origin'
+        });
+        return fetch(request);
     }
 
     /**
@@ -108,7 +145,14 @@ class GameComponent extends React.Component {
 
         return (
             <section className="game-component col-lg-12">
+                <button onClick={this.login}>Login</button>
+                <button onClick={this.logout}>Logout</button>
+
+                <hr />
+
                 __ {working} __
+
+                <hr />
 
                 <div className="row">
                     <Stats win={this.state.stats.win} lose={this.state.stats.lose} draw={this.state.stats.draw}/>

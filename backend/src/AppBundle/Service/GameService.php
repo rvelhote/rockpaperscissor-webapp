@@ -79,7 +79,7 @@ class GameService
         $game = [
             'guid' => $this->game->getGuid(),
             'opponent' => [
-                'handle' => $this->game->getPlayer2()->getHandle(),
+                'handle' => $this->game->getPlayer2()->getUsername(),
                 'picture' => ''
             ],
             'moves' => $moves,

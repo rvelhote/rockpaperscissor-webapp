@@ -67,7 +67,7 @@ class DefaultController extends Controller
     /**
      *
      * @Method({"POST"})
-     * @Route("/play", name="play")
+     * @Route("/api/v1/play", name="play")
      *
      * @param Request $request
      * @return JsonResponse
@@ -143,50 +143,42 @@ class DefaultController extends Controller
         $this->getDoctrine()->getEntityManager()->persist($game);
         $this->getDoctrine()->getEntityManager()->flush();
 
-        $newGame = [
-            'game' => $this->getNewGame(),
-            'result' => [
-                'opponent' => $game->getPlayer2()->getHandle(),
-                'move' => $game->getMovePlayer2()->getName(),
-                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
-                'tied' => ($result instanceof Tie),
-                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
-            ],
-            'stats' => $this->getStats($player->getId()),
-        ];
+//        $newGame = [
+//            'game' => $this->getNewGame(),
+//            'result' => [
+//                'opponent' => $game->getPlayer2()->getHandle(),
+//                'move' => $game->getMovePlayer2()->getName(),
+//                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
+//                'tied' => ($result instanceof Tie),
+//                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
+//            ],
+//            'stats' => $this->getStats($player->getId()),
+//        ];
 
-        return new JsonResponse($newGame);
+        return new JsonResponse(true);
     }
 
     /**
-     * @Method({"POST"})
-     * @Route("/game", name="game")
-     *
+     * This action will obtain a new game to play and also refresh the user's play stats.
      * @param Request $request
      * @return JsonResponse
+     *
+     * @Method({"POST"})
+     * @Route("/api/v1/game", name="game")
+     *
+     * TODO Validate if the user if currently logged-in
      */
     public function gameAction(Request $request)
     {
-
-
-
-        /** @var \AppBundle\Entity\Player $player */
-        //$player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
-
         /** @var PlayerService $player */
         $player = $this->get('app.service.player');
 
         /** @var GameService $g */
         $game = $this->get('app.service.game');
 
-        /** @var StatsService $statistics */
-//        $statistics = $this->get('app.service.stats');
-
-        $newGame = [
+        return new JsonResponse([
             'game' => $game->getGame(),
             'stats' => $player->statistics(),
-        ];
-
-        return new JsonResponse($newGame);
+        ]);
     }
 }

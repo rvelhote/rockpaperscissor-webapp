@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Player
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="player")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlayerRepository")
  */
-class Player
+class Player implements UserInterface
 {
     /**
      * @var int
@@ -22,15 +23,31 @@ class Player
     private $id;
 
     /**
-     * @var string
-     * @ORM\Column(name="handle", type="string", length=255)
+     * @ORM\Column(type="string", length=25, unique=true)
      */
-    private $handle;
+    private $username;
+
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $password;
+
+    /**
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
 
     /**
      * @ORM\OneToMany(targetEntity="Result", mappedBy="player")
      */
     private $results;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -43,34 +60,75 @@ class Player
     }
 
     /**
-     * Set handle
+     * Set username
      *
-     * @param string $handle
+     * @param string $username
      *
      * @return Player
      */
-    public function setHandle($handle)
+    public function setUsername($username)
     {
-        $this->handle = $handle;
+        $this->username = $username;
 
         return $this;
     }
 
     /**
-     * Get handle
+     * Get username
      *
      * @return string
      */
-    public function getHandle()
+    public function getUsername()
     {
-        return $this->handle;
+        return $this->username;
     }
+
     /**
-     * Constructor
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return Player
      */
-    public function __construct()
+    public function setPassword($password)
     {
-        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return Player
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 
     /**
@@ -105,5 +163,49 @@ class Player
     public function getResults()
     {
         return $this->results;
+    }
+
+    /**
+     * Returns the roles granted to the user.
+     *
+     * <code>
+     * public function getRoles()
+     * {
+     *     return array('ROLE_USER');
+     * }
+     * </code>
+     *
+     * Alternatively, the roles might be stored on a ``roles`` property,
+     * and populated in any number of different ways when the user object
+     * is created.
+     *
+     * @return (Role|string)[] The user roles
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        return null;
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        return null;
     }
 }

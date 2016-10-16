@@ -61,7 +61,7 @@ class GeneratePlayersCommand extends ContainerAwareCommand
         $this->entityManager = $this->getContainer()->get('doctrine.orm.default_entity_manager');
 
         $player = $this->createMainPlayer();
-        $output->writeln(sprintf('Main player created with the handle <info>%s</info>', $player->getHandle()));
+        $output->writeln(sprintf('Main player created with the handle <info>%s</info>', $player->getUsername()));
 
         $players = $this->createPlayers();
         $output->writeln(sprintf('<info>%d</info> other players were created', count($players)));
@@ -74,8 +74,12 @@ class GeneratePlayersCommand extends ContainerAwareCommand
      */
     private function createMainPlayer() : Player
     {
+        $encoder = $this->getContainer()->get('security.password_encoder');
+
         $player = new Player();
-        $player->setHandle('@rvelhote');
+        $player->setUsername('@rvelhote');
+        $player->setIsActive(true);
+        $player->setPassword($encoder->encodePassword($player, 'x'));
 
         $this->entityManager->persist($player);
         $this->entityManager->flush();
@@ -90,12 +94,16 @@ class GeneratePlayersCommand extends ContainerAwareCommand
      */
     private function createPlayers(int $count = 20) : array
     {
+        $encoder = $this->getContainer()->get('security.password_encoder');
+
         /** @var Player[] $players */
         $players = [];
 
         for ($i = 0; $i < $count; $i++) {
             $players[$i] = new Player();
-            $players[$i]->setHandle('@abardadyn <'.$i.'>');
+            $players[$i]->setUsername('@abardadyn <'.$i.'>');
+            $players[$i]->setIsActive(true);
+            $players[$i]->setPassword($encoder->encodePassword($players[$i], 'x'));
 
             $this->entityManager->persist($players[$i]);
             $this->entityManager->flush();
