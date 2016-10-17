@@ -113,29 +113,33 @@ class DefaultController extends Controller
         $result = $engine->play($move->getSlug(), $game->getMovePlayer2()->getSlug(), $game->getGameType()->getRules());
 
 
+
+
         // Update the game definition with the data of the player that played the game
         $game->setPlayer1($player);
         $game->setMovePlayer1($move);
         $game->setDatePlayed(new DateTime());
 
-        $r1 = new ResultEntity();
-        $r1->setPlayer($game->getPlayer1());
+        if()
 
-        $r2 = new ResultEntity();
-        $r2->setPlayer($game->getPlayer2());
-
-        if ($result instanceof Tie) {
-            $r1->setDraw(true);
-            $r2->setDraw(true);
-        } else {
-            if ($result->getWinner()->getPlay() === $move->getSlug()) {
-                $r1->setWin(true);
-                $r2->setLose(true);
-            } else {
-                $r1->setLose(true);
-                $r2->setWin(true);
-            }
-        }
+//        $r1 = new ResultEntity();
+//        $r1->setPlayer($game->getPlayer1());
+//
+//        $r2 = new ResultEntity();
+//        $r2->setPlayer($game->getPlayer2());
+//
+//        if ($result instanceof Tie) {
+//            $r1->setDraw(true);
+//            $r2->setDraw(true);
+//        } else {
+//            if ($result->getWinner()->getPlay() === $move->getSlug()) {
+//                $r1->setWin(true);
+//                $r2->setLose(true);
+//            } else {
+//                $r1->setLose(true);
+//                $r2->setWin(true);
+//            }
+//        }
 
         $game->addResult($r1);
         $game->addResult($r2);

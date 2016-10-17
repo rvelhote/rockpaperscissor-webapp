@@ -64,9 +64,10 @@ class Game
     private $gameType;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Result", inversedBy="games", cascade={"all"})
+     * @var int
+     * @ORM\Column(name="result", type="smallint", nullable=true)
      */
-    private $results;
+    private $result;
 
     /**
      * @var bool
@@ -317,5 +318,29 @@ class Game
     public function getLocked()
     {
         return $this->locked;
+    }
+
+    /**
+     * Set result
+     *
+     * @param integer $result
+     *
+     * @return Game
+     */
+    public function setResult($result)
+    {
+        $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * Get result
+     *
+     * @return integer
+     */
+    public function getResult()
+    {
+        return $this->result;
     }
 }
