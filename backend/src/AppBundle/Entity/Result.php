@@ -43,7 +43,7 @@ class Result
     private $draw;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Result", mappedBy="results")
+     * @ORM\ManyToMany(targetEntity="Game", mappedBy="results")
      */
     private $games;
 
