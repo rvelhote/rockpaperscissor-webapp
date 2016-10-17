@@ -113,54 +113,39 @@ class DefaultController extends Controller
         $engine = $this->get('app.game_engine');
         $result = $engine->play($move->getSlug(), $game->getMovePlayer2()->getSlug(), $game->getGameType()->getRules());
 
-
+        if ($result instanceof Tie) {
+            $game->setResult(0);
+        } else if ($result->getWinner()->getPlay() === $move->getSlug()) {
+            $game->setResult(1);
+        } else {
+            $game->setResult(2);
+        }
 
 
         // Update the game definition with the data of the player that played the game
-//        $game->setPlayer1($player);
-//        $game->setMovePlayer1($move);
-//        $game->setDatePlayed(new DateTime());
-//
-//        if()
-
-//        $r1 = new ResultEntity();
-//        $r1->setPlayer($game->getPlayer1());
-//
-//        $r2 = new ResultEntity();
-//        $r2->setPlayer($game->getPlayer2());
-//
-//        if ($result instanceof Tie) {
-//            $r1->setDraw(true);
-//            $r2->setDraw(true);
-//        } else {
-//            if ($result->getWinner()->getPlay() === $move->getSlug()) {
-//                $r1->setWin(true);
-//                $r2->setLose(true);
-//            } else {
-//                $r1->setLose(true);
-//                $r2->setWin(true);
-//            }
-//        }
-//
-//        $game->addResult($r1);
-//        $game->addResult($r2);
+        $game->setPlayer1($this->getUser());
+        $game->setMovePlayer1($move);
+        $game->setDatePlayed(new DateTime());
 
         $this->getDoctrine()->getEntityManager()->persist($game);
         $this->getDoctrine()->getEntityManager()->flush();
 
-//        $newGame = [
-//            'game' => $this->getNewGame(),
-//            'result' => [
-//                'opponent' => $game->getPlayer2()->getHandle(),
-//                'move' => $game->getMovePlayer2()->getName(),
-//                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
-//                'tied' => ($result instanceof Tie),
-//                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
-//            ],
-//            'stats' => $this->getStats($player->getId()),
-//        ];
+        /** @var GameService $g */
+        $ggg = $this->get('app.service.game');
 
-        return new JsonResponse(true);
+        $newGame = [
+            'game' => $ggg->getGame(),
+            'result' => [
+                'opponent' => $game->getPlayer2()->getUsername(),
+                'move' => $game->getMovePlayer2()->getName(),
+                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
+                'tied' => ($result instanceof Tie),
+                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
+            ],
+            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
+        ];
+
+        return new JsonResponse($newGame);
     }
 
     /**
@@ -175,18 +160,6 @@ class DefaultController extends Controller
      */
     public function gameAction(Request $request)
     {
-        /** @var GameSet $set */
-        $set = $this->getDoctrine()->getRepository('AppBundle:GameSet')->findAll()[0];
-
-
-        var_dump($set->getGuid());
-        /** @var Game $g */
-        foreach($set->getGames() as $g) {
-            print $g->getGuid()." -- ".$g->getGameType()->getName()." === ";
-        }
-
-        exit;
-
         /** @var PlayerService $player */
         $player = $this->get('app.service.player');
 

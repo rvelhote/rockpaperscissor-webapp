@@ -65,11 +65,11 @@ class GameService
      */
     public function getGame() : array
     {
-        $this->game = $this->repository->findOneBy(['locked' => null]);
-        $this->game->setLocked(true);
+        $this->game = $this->repository->findOneBy(['datePlayed' => null]);
+//        $this->game->setLocked(true);
 
-        $this->manager->persist($this->game);
-        $this->manager->flush();
+//        $this->manager->persist($this->game);
+//        $this->manager->flush();
 
         $moves = array_map(function ($move) {
             /** @var MoveType $move */

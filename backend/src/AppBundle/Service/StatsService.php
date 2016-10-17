@@ -60,9 +60,9 @@ class StatsService
      * StatsService constructor.
      * @param ResultRepository $resultRepository Doctrine repository object to access the 'result' table.
      */
-    public function __construct(ResultRepository $resultRepository)
+    public function __construct(/*ResultRepository $resultRepository*/)
     {
-        $this->resultRepository = $resultRepository;
+//        $this->resultRepository = $resultRepository;
     }
 
     /**
@@ -131,18 +131,10 @@ class StatsService
      */
     public function all($player) : array
     {
-        if(is_null($player)) {
-            return [
-                'win' => 0,
-                'draw' => 0,
-                'lose' => 0,
-            ];
-        }
-
         return [
-            'win' => $this->countWinsFor($player->getId()),
-            'draw' => $this->countDrawsFor($player->getId()),
-            'lose' => $this->countLosesFor($player->getId()),
+            'win' => 0,
+            'draw' => 0,
+            'lose' => 0,
         ];
     }
 }
