@@ -125,11 +125,7 @@ class GameComponent extends React.Component {
     }
 
     logout() {
-        var request = new Request('http://localhost/api/v1/logout', {
-            method: 'POST',
-            credentials: 'same-origin'
-        });
-        return fetch(request);
+        window.localStorage.removeItem('token');
     }
 
     /**
