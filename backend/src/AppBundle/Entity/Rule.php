@@ -38,7 +38,7 @@ class Rule
     private $outcome;
 
     /**
-     * @ORM\ManyToOne(targetEntity="GameType")
+     * @ORM\ManyToOne(targetEntity="GameType", inversedBy="rules")
      */
     private $gameType;
 
