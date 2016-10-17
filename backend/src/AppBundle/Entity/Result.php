@@ -48,7 +48,7 @@ class Result
     private $games;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Player")
+     * @ORM\ManyToOne(targetEntity="Player", inversedBy="results")
      */
     private $player;
 
