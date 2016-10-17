@@ -25,6 +25,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Game;
+use AppBundle\Entity\GameSet;
 use AppBundle\Entity\Player;
 use AppBundle\Entity\Result as ResultEntity;
 use AppBundle\Repository\GameRepository;
@@ -96,9 +97,9 @@ class DefaultController extends Controller
         /** @var MakeMoveForm $playerSubmission */
         $playerSubmission = $playerSubmissionForm->getData();
 
-        /** @var Player $player */
-        // TODO Maintain session state instead of hardcoding!
-        $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+//        /** @var Player $player */
+//        // TODO Maintain session state instead of hardcoding!
+//        $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
 
         /** @var Game $game */
         $criteria = ['guid' => $playerSubmission->getGame()];
@@ -116,11 +117,11 @@ class DefaultController extends Controller
 
 
         // Update the game definition with the data of the player that played the game
-        $game->setPlayer1($player);
-        $game->setMovePlayer1($move);
-        $game->setDatePlayed(new DateTime());
-
-        if()
+//        $game->setPlayer1($player);
+//        $game->setMovePlayer1($move);
+//        $game->setDatePlayed(new DateTime());
+//
+//        if()
 
 //        $r1 = new ResultEntity();
 //        $r1->setPlayer($game->getPlayer1());
@@ -140,9 +141,9 @@ class DefaultController extends Controller
 //                $r2->setWin(true);
 //            }
 //        }
-
-        $game->addResult($r1);
-        $game->addResult($r2);
+//
+//        $game->addResult($r1);
+//        $game->addResult($r2);
 
         $this->getDoctrine()->getEntityManager()->persist($game);
         $this->getDoctrine()->getEntityManager()->flush();
@@ -174,6 +175,18 @@ class DefaultController extends Controller
      */
     public function gameAction(Request $request)
     {
+        /** @var GameSet $set */
+        $set = $this->getDoctrine()->getRepository('AppBundle:GameSet')->findAll()[0];
+
+
+        var_dump($set->getGuid());
+        /** @var Game $g */
+        foreach($set->getGames() as $g) {
+            print $g->getGuid()." -- ".$g->getGameType()->getName()." === ";
+        }
+
+        exit;
+
         /** @var PlayerService $player */
         $player = $this->get('app.service.player');
 

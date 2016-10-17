@@ -36,19 +36,7 @@ class Player implements UserInterface
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Result", mappedBy="player")
-     */
-    private $results;
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
+    
     /**
      * Get id
      *
@@ -129,40 +117,6 @@ class Player implements UserInterface
     public function getIsActive()
     {
         return $this->isActive;
-    }
-
-    /**
-     * Add result
-     *
-     * @param \AppBundle\Entity\Result $result
-     *
-     * @return Player
-     */
-    public function addResult(\AppBundle\Entity\Result $result)
-    {
-        $this->results[] = $result;
-
-        return $this;
-    }
-
-    /**
-     * Remove result
-     *
-     * @param \AppBundle\Entity\Result $result
-     */
-    public function removeResult(\AppBundle\Entity\Result $result)
-    {
-        $this->results->removeElement($result);
-    }
-
-    /**
-     * Get results
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getResults()
-    {
-        return $this->results;
     }
 
     /**

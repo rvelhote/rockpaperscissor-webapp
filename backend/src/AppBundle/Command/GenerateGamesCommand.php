@@ -25,6 +25,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Game;
+use AppBundle\Entity\GameSet;
 use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Player;
@@ -73,20 +74,26 @@ class GenerateGamesCommand extends ContainerAwareCommand
         /** @var GameType[] $gameTypes */
         $gameTypes = $this->entityManager->getRepository('AppBundle:GameType')->findAll();
 
-        for ($i = 0; $i < 100; $i++) {
-            $unique = Uuid::uuid4()->toString();
+        for ($i = 0; $i < 33; $i++) {
+            $gameset = new GameSet();
+            $gameset->setGuid(Uuid::uuid4()->toString());
 
-            $game = new Game();
-            $game->setGuid($unique);
+            for($j = 0; $j < 3; $j++) {
+                $game = new Game();
+                $game->setGuid(Uuid::uuid4()->toString());
 
-            $game->setPlayer2($players[random_int(1, count($players) - 1)]);
-            $game->setMovePlayer2($moves[random_int(0, 2)]);
-            $game->setGameType($gameTypes[0]);
+                $game->setPlayer2($players[random_int(1, count($players) - 1)]);
+                $game->setMovePlayer2($moves[random_int(0, 2)]);
+                $game->setGameType($gameTypes[0]);
+                $game->setGameSet($gameset);
 
-            $this->entityManager->persist($game);
+                $gameset->addGame($game);
+            }
+
+            $this->entityManager->persist($gameset);
             $this->entityManager->flush();
         }
 
-        $output->writeln(sprintf('<info>%d</info> games were created!', 100));
+        $output->writeln(sprintf('<info>%d</info> games were created!', 33));
     }
 }

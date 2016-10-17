@@ -92,7 +92,7 @@ class GeneratePlayersCommand extends ContainerAwareCommand
      * @param int $count The amount of players to create
      * @return Player[] The list of created players
      */
-    private function createPlayers(int $count = 20) : array
+    private function createPlayers(int $count = 5) : array
     {
         $encoder = $this->getContainer()->get('security.password_encoder');
 

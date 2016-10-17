@@ -70,12 +70,9 @@ class Game
     private $result;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="locked", type="boolean", nullable=true, options={"default": false})
+     * @ORM\ManyToOne(targetEntity="GameSet", cascade={"persist"})
      */
-    private $locked;
-
+    private $gameSet;
 
     /**
      * Get id
@@ -133,6 +130,30 @@ class Game
     public function getDatePlayed()
     {
         return $this->datePlayed;
+    }
+
+    /**
+     * Set result
+     *
+     * @param integer $result
+     *
+     * @return Game
+     */
+    public function setResult($result)
+    {
+        $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * Get result
+     *
+     * @return integer
+     */
+    public function getResult()
+    {
+        return $this->result;
     }
 
     /**
@@ -254,93 +275,28 @@ class Game
     {
         return $this->gameType;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
-     * Add result
+     * Set gameSet
      *
-     * @param \AppBundle\Entity\Result $result
+     * @param \AppBundle\Entity\GameSet $gameSet
      *
      * @return Game
      */
-    public function addResult(\AppBundle\Entity\Result $result)
+    public function setGameSet(\AppBundle\Entity\GameSet $gameSet = null)
     {
-        $this->results[] = $result;
+        $this->gameSet = $gameSet;
 
         return $this;
     }
 
     /**
-     * Remove result
+     * Get gameSet
      *
-     * @param \AppBundle\Entity\Result $result
+     * @return \AppBundle\Entity\GameSet
      */
-    public function removeResult(\AppBundle\Entity\Result $result)
+    public function getGameSet()
     {
-        $this->results->removeElement($result);
-    }
-
-    /**
-     * Get results
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getResults()
-    {
-        return $this->results;
-    }
-
-    /**
-     * Set locked
-     *
-     * @param boolean $locked
-     *
-     * @return Game
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
-    }
-
-    /**
-     * Get locked
-     *
-     * @return boolean
-     */
-    public function getLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * Set result
-     *
-     * @param integer $result
-     *
-     * @return Game
-     */
-    public function setResult($result)
-    {
-        $this->result = $result;
-
-        return $this;
-    }
-
-    /**
-     * Get result
-     *
-     * @return integer
-     */
-    public function getResult()
-    {
-        return $this->result;
+        return $this->gameSet;
     }
 }
