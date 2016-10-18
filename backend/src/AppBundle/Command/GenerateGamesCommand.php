@@ -77,6 +77,7 @@ class GenerateGamesCommand extends ContainerAwareCommand
         for ($i = 0; $i < 33; $i++) {
             $gameset = new GameSet();
             $gameset->setGuid(Uuid::uuid4()->toString());
+            $gameset->setLocked(false);
 
             for($j = 0; $j < 3; $j++) {
                 $game = new Game();
