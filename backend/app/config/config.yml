@@ -65,7 +65,22 @@ swiftmailer:
     spool:     { type: memory }
 
 lexik_jwt_authentication:
-  private_key_path: %jwt_private_key_path%
-  public_key_path:  %jwt_public_key_path%
-  pass_phrase:      %jwt_key_pass_phrase%
-  token_ttl:        %jwt_token_ttl%
+    private_key_path: %jwt_private_key_path%
+    public_key_path:  %jwt_public_key_path%
+    pass_phrase:      %jwt_key_pass_phrase%
+    token_ttl:        %jwt_token_ttl%
+
+fos_rest:
+    format_listener:
+        rules:
+          - priorities: [json]
+    view:
+        view_response_listener: true
+        formats:
+            xml: false
+            jsonp: false
+            json : true
+        templating_formats:
+            html: false
+    routing_loader:
+        default_format: json

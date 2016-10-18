@@ -98,7 +98,7 @@ class GameComponent extends React.Component {
         headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
 
         var request = new Request('http://localhost/api/v1/game', {
-            method: 'POST',
+            method: 'GET',
             headers: headers
         });
         return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, game: response.game }));

@@ -19,6 +19,10 @@ services:
     class: AppBundle\Service\GameService
     arguments: ['@app.repository.game', '@doctrine.orm.entity_manager']
 
+  app.service.gameset:
+    class: AppBundle\Service\GameSetService
+    arguments: ['@app.repository.gameset', '@doctrine.orm.entity_manager']
+
   app.repository:
     class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.entity_manager', getRepository]
@@ -27,6 +31,10 @@ services:
   app.repository.game:
     parent: app.repository
     arguments: ['AppBundle:Game']
+
+  app.repository.gameset:
+    parent: app.repository
+    arguments: ['AppBundle:GameSet']
 
   app.repository.player:
     parent: app.repository

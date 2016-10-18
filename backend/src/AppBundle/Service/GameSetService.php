@@ -22,23 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-namespace AppBundle\Repository;
+namespace AppBundle\Service;
 
-use Doctrine\ORM\EntityRepository;
+use AppBundle\Entity\GameSet;
+use AppBundle\Repository\GameSetRepository;
+use Doctrine\ORM\EntityManager;
 
 /**
- * Class GameSetRepository
- * @package AppBundle\Repository
+ * Class GameSetService
+ * @package AppBundle\Service
  */
-class GameSetRepository extends EntityRepository
+class GameSetService
 {
     /**
-     * Find a free gameset to play. Essentially this will find a gameset that doesn't have the 'locked' flag set.
-     * @return null|object A gameset (which allows access to all the games) or null if nothing is found.
+     * @var GameSetRepository
      */
-    public function findFreeGameSet()
+    private $repository;
+
+    /**
+     * @var EntityManager
+     */
+    private $manager;
+
+    /**
+     * GameSetService constructor.
+     * @param GameSetRepository $repository
+     * @param EntityManager $manager
+     */
+    public function __construct(GameSetRepository $repository, EntityManager $manager)
     {
-        $criteria = ['locked' => false];
-        return $this->findOneBy($criteria);
+        $this->repository = $repository;
+        $this->manager = $manager;
+    }
+
+    /**
+     * @return null|object
+     */
+    public function findGameset()
+    {
+        /** @var GameSet $gameset */
+        return $this->repository->findFreeGameSet();
     }
 }

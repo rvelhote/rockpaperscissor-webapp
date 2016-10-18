@@ -30,11 +30,13 @@ use AppBundle\Entity\Player;
 use AppBundle\Entity\Result as ResultEntity;
 use AppBundle\Repository\GameRepository;
 use AppBundle\Service\GameService;
+use AppBundle\Service\GameSetService;
 use AppBundle\Service\PlayerService;
 use AppBundle\Service\StatsService;
 use Balwan\RockPaperScissor\Game\Result\Tie;
 use DateTime;
 use Exception;
+use FOS\RestBundle\Controller\FOSRestController;
 use Ramsey\Uuid\Uuid;
 use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
@@ -48,13 +50,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use FOS\RestBundle\Controller\Annotations\View;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
  * Class DefaultController
  * @package AppBundle\Controller
  *
  */
-class DefaultController extends Controller
+class DefaultController extends FOSRestController
 {
     /**
      * @Method({"GET"})
@@ -149,26 +154,34 @@ class DefaultController extends Controller
     }
 
     /**
-     * This action will obtain a new game to play and also refresh the user's play stats.
-     * @param Request $request
-     * @return JsonResponse
      *
-     * @Method({"POST"})
-     * @Route("/api/v1/game", name="game")
      *
-     * TODO Validate if the user if currently logged-in
+     *
+     * @Get("/api/v1/game", name="game", options={ "method_prefix" = false })
+     *
+     * @View(serializerGroups={"Default"})
+     *
+     *
      */
     public function gameAction(Request $request)
     {
-        /** @var PlayerService $player */
-        $player = $this->get('app.service.player');
+//        /** @var PlayerService $player */
+//        $player = $this->get('app.service.player');
 
         /** @var GameService $g */
-        $game = $this->get('app.service.game');
+//        $game = $this->get('app.service.game');
 
-        return new JsonResponse([
-            'game' => $game->getGame(),
-            'stats' => $player->statistics(),
-        ]);
+
+        return $this->get('app.service.gameset')->findGameset();
+
+        //$gameset = $gamesetService->findGameset();
+
+        //$games = $gameset->getGames();
+
+
+
+//            'game' => $gamesetService,
+//            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
+//        ]);
     }
 }
