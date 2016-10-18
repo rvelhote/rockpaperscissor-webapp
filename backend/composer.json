@@ -34,7 +34,9 @@
         "behat/behat": "^3.2",
         "phpunit/phpunit": "^5.6",
         "phpmd/phpmd": "^2.4",
-        "lexik/jwt-authentication-bundle": "^1.7"
+        "lexik/jwt-authentication-bundle": "^1.7",
+        "friendsofsymfony/rest-bundle": "^2.1",
+        "jms/serializer-bundle": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
