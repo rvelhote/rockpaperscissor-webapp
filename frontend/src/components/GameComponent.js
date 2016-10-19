@@ -39,6 +39,10 @@ class GameComponent extends React.Component {
                 move: '',
                 handle: '@rvelhote'
             },
+            gameset: {
+              guid: '',
+                games: []
+            },
             game: {
                 opponent: {
                     uuid: '',
@@ -101,7 +105,7 @@ class GameComponent extends React.Component {
             method: 'GET',
             headers: headers
         });
-        return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, game: response.game }));
+        return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, gameset: response.gameset }));
     }
 
     login() {
@@ -140,7 +144,7 @@ class GameComponent extends React.Component {
 
 
         return (
-            <section className="game-component col-lg-12">
+            <section>
                 <button onClick={this.login}>Login</button>
                 <button onClick={this.logout}>Logout</button>
 
@@ -150,30 +154,47 @@ class GameComponent extends React.Component {
 
                 <hr />
 
-                <div className="row">
+                <div>
                     <Stats win={this.state.stats.win} lose={this.state.stats.lose} draw={this.state.stats.draw}/>
                 </div>
-                <div className="row">
-                    <div className="col-lg-5">
+                <div>
+                    <div>
                         <Player player={this.state.player} />
 
                         {
-                            this.state.game.moves.map((m) =>
-                                <Move key={m.move} disabled={this.state.working} name={m.move} play={this.onPlayClick.bind(this)} />
+                            this.state.gameset.games.map((g) =>
+                                <div key={g.guid}>
+                                    <div>GameGUID: {g.guid}</div>
+
+
+                                        <div>GameName: {g.game_type.name}</div>
+                                        <div>GameName: {g.player2.username}</div>
+                                    {
+                                        g.game_type.move_types.map((m) => {
+                                            return <Move key={m.slug} disabled={this.state.working} name={m.slug} play={this.onPlayClick.bind(this)} />
+                                        })
+                                    }
+
+
+
+                                </div>
                             )
                         }
                     </div>
 
-                    <div className="col-lg-2">
-                        <span className="versus">vs</span>
+                    <div>
+                        <span>vs</span>
                     </div>
 
-                    <div className="col-lg-5">
+                    <div>
                         <Player player={this.state.game.opponent} />
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-lg-12">
+                <div>
+                    <div>
+                        GamesetID: {this.state.gameset.guid}
+                    </div>
+                    <div>
                         <ul>
                             <li>Opponent played: {this.state.result.move}</li>
                             <li>You played: {this.state.player.move}</li>
