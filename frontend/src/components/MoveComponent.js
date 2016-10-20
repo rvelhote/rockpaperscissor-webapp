@@ -29,7 +29,7 @@ require('../styles//Move.css');
 
 let MoveComponent = (props) => (
     <div className="move-component">
-        <button disabled={ props.disabled ? 'disabled' : null } className="move" type="button" data-move={props.name} onClick={(e) => props.play(e.target.parentNode)}>
+        <button disabled={ props.disabled ? 'disabled' : null } className="move" type="button" onClick={(e) => props.onPlayClick(props.gameset, props.game, props.name)}>
             <img alt={ props.name } src={ require('../images/' + props.name + '.png') }/>
         </button>
     </div>

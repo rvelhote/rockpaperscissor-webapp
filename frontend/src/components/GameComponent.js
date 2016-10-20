@@ -69,10 +69,12 @@ class GameComponent extends React.Component {
         this.requestNewGame();//.then(() => console.log(this.state));
     }
 
-    onPlayClick(target) {
+    onPlayClick(gamesetGuid, gameGuid, move) {
+        // console.log(gamesetGuid, gameGuid, move);
         var data = new FormData();
-        data.append('form[move]', target.dataset.move);
-        data.append('form[game]', this.state.game.guid);
+        data.append('form[move]', move);
+        data.append('form[game]', gameGuid);
+        data.append('form[gameset]', gamesetGuid);
 
         var headers = new Headers();
         headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
@@ -81,7 +83,7 @@ class GameComponent extends React.Component {
         //
         var player = {
             handle: this.state.player.handle,
-            move: target.dataset.move
+            move: move
         };
 
         var request = new Request('http://localhost/api/v1/play', {
@@ -171,7 +173,12 @@ class GameComponent extends React.Component {
                                         <div>GameName: {g.player2.username}</div>
                                     {
                                         g.game_type.move_types.map((m) => {
-                                            return <Move key={m.slug} disabled={this.state.working} name={m.slug} play={this.onPlayClick.bind(this)} />
+                                            return <Move key={m.slug}
+                                                         disabled={this.state.working}
+                                                         gameset={this.state.gameset.guid}
+                                                         game={g.guid}
+                                                         name={m.slug}
+                                                         onPlayClick={this.onPlayClick.bind(this)} />
                                         })
                                     }
 

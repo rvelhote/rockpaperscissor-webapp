@@ -28,6 +28,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * Game
@@ -77,12 +78,16 @@ class Game
     /**
      * @var MoveType
      * @ORM\ManyToOne(targetEntity="MoveType")
+     * @Expose
+     * @Groups({"result"})
      */
     private $movePlayer1;
 
     /**
      * @var MoveType
      * @ORM\ManyToOne(targetEntity="MoveType")
+     * @Expose
+     * @Groups({"result"})
      */
     private $movePlayer2;
 
@@ -95,6 +100,8 @@ class Game
     /**
      * @var int
      * @ORM\Column(name="result", type="smallint", nullable=true)
+     * @Expose
+     * @Groups({"result"})
      */
     private $result;
 

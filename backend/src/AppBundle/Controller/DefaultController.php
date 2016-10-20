@@ -70,13 +70,15 @@ class DefaultController extends FOSRestController
         return new Response('Forbidden... for now :)', 403);
     }
 
+
+
     /**
      *
-     * @Method({"POST"})
-     * @Route("/api/v1/play", name="play")
      *
-     * @param Request $request
-     * @return JsonResponse
+     *
+     * @Post("/api/v1/play", name="play", options={ "method_prefix" = false })
+         * @View(serializerGroups={"Default", "result"})
+     *
      *
      */
     public function playAction(Request $request)
@@ -85,6 +87,7 @@ class DefaultController extends FOSRestController
 
         $options = ['csrf_protection' => false];
         $playerSubmissionForm = $this->createFormBuilder($playerSubmission, $options)
+            ->add('gameset', TextType::class)
             ->add('game', TextType::class)
             ->add('move', TextType::class)
             ->getForm();
@@ -135,22 +138,22 @@ class DefaultController extends FOSRestController
         $this->getDoctrine()->getEntityManager()->persist($game);
         $this->getDoctrine()->getEntityManager()->flush();
 
-        /** @var GameService $g */
-        $ggg = $this->get('app.service.game');
+//        /** @var GameService $g */
+//        $ggg = $this->get('app.service.game');
 
-        $newGame = [
-            'game' => $ggg->getGame(),
-            'result' => [
-                'opponent' => $game->getPlayer2()->getUsername(),
-                'move' => $game->getMovePlayer2()->getName(),
-                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
-                'tied' => ($result instanceof Tie),
-                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
-            ],
-            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
-        ];
+//        $newGame = [
+//            'game' => $ggg->getGame(),
+//            'result' => [
+//                'opponent' => $game->getPlayer2()->getUsername(),
+//                'move' => $game->getMovePlayer2()->getName(),
+//                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
+//                'tied' => ($result instanceof Tie),
+//                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
+//            ],
+//            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
+//        ];
 
-        return new JsonResponse($newGame);
+        return ['game' => $game];
     }
 
     /**

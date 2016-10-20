@@ -35,17 +35,39 @@ class MakeMoveForm
 {
     /**
      * @Assert\NotBlank()
-     * @AppBundle\Validator\Constraints\GameGuidExists()
+     * @var string
+     */
+    protected $gameset = '';
+
+    /**
+     * @Assert\NotBlank()
+     * AppBundle\Validator\Constraints\GameGuidExists()
      * @var string
      */
     protected $game = '';
 
     /**
      * @Assert\NotBlank()
-     * @AppBundle\Validator\Constraints\MoveExists()
+     * AppBundle\Validator\Constraints\MoveExists()
      * @var string
      */
     protected $move = '';
+
+    /**
+     * @return string
+     */
+    public function getGameset()
+    {
+        return $this->gameset;
+    }
+
+    /**
+     * @param $gameset
+     */
+    public function setGameset($gameset)
+    {
+        $this->gameset = $gameset;
+    }
 
     /**
      * @return string
