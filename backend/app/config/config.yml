@@ -84,3 +84,5 @@ fos_rest:
             html: false
     routing_loader:
         default_format: json
+    serializer:
+      serialize_null: true
