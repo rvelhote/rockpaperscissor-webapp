@@ -77,7 +77,7 @@ class DefaultController extends FOSRestController
      *
      *
      * @Post("/api/v1/play", name="play", options={ "method_prefix" = false })
-         * @View(serializerGroups={"Default", "result"})
+     * @View(serializerGroups={"Default"})
      *
      *
      */
@@ -153,7 +153,11 @@ class DefaultController extends FOSRestController
 //            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
 //        ];
 
-        return ['game' => $game];
+        return [
+            'user' => $this->getUser(),
+            'gameset' => $this->get('app.service.gameset')->findGameset(),
+            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0],
+        ];
     }
 
     /**
