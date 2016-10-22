@@ -26,6 +26,7 @@ namespace AppBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Accessor;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\Groups;
@@ -72,6 +73,7 @@ class Game
     /**
      * @var DateTime
      * @ORM\Column(name="datePlayed", type="datetimetz", nullable=true)
+     * @Expose
      */
     private $datePlayed;
 
@@ -79,7 +81,6 @@ class Game
      * @var MoveType
      * @ORM\ManyToOne(targetEntity="MoveType")
      * @Expose
-     * @Groups({"result"})
      */
     private $movePlayer1;
 
@@ -87,7 +88,7 @@ class Game
      * @var MoveType
      * @ORM\ManyToOne(targetEntity="MoveType")
      * @Expose
-     * @Groups({"result"})
+     * @Accessor(getter="getMovePlayer2IfUnplayed")
      */
     private $movePlayer2;
 
@@ -101,7 +102,6 @@ class Game
      * @var int
      * @ORM\Column(name="result", type="smallint", nullable=true)
      * @Expose
-     * @Groups({"result"})
      */
     private $result;
 
@@ -109,6 +109,16 @@ class Game
      * @ORM\ManyToOne(targetEntity="GameSet", inversedBy="games", cascade={"persist"})
      */
     private $gameSet;
+
+    /**
+     * Custom accessor for the property when serializing to only send the move made by player2 when the game was
+     * actually played. This way we can always send the full gameset when playing to make sure that the frontend is
+     * always up-to-date.
+     */
+    public function getMovePlayer2IfUnplayed()
+    {
+       return !is_null($this->getDatePlayed()) ? $this->getMovePlayer2() : null;
+    }
 
     /**
      * Get id
