@@ -57,10 +57,17 @@ class GameSetService
 
     /**
      * @return null|object
+     * TODO Console task that clears stable locked games.
      */
     public function findGameset()
     {
         /** @var GameSet $gameset */
-        return $this->repository->findFreeGameSet();
+        $gameset = $this->repository->findFreeGameSet();
+        $gameset->setLocked(true);
+
+        $this->manager->persist($gameset);
+        $this->manager->flush();
+
+        return $gameset;
     }
 }
