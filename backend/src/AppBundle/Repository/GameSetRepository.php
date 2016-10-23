@@ -49,6 +49,7 @@ class GameSetRepository extends EntityRepository
      */
     public function findGamesetByPlayer(Player $player) {
         $criteria = ['owner' => $player->getId()];
-        return $this->findOneBy($criteria);
+        $orderBy = ['lastActivity' => 'DESC'];
+        return $this->findOneBy($criteria, $orderBy);
     }
 }

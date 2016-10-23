@@ -157,14 +157,15 @@ class GameComponent extends React.Component {
                 <hr />
 
                 <div>
-                    <Stats win={this.state.stats.win} lose={this.state.stats.lose} draw={this.state.stats.draw}/>
+                    <Stats win={this.state.stats.wins} lose={this.state.stats.losses} draw={this.state.stats.draws}/>
                 </div>
                 <div>
                     <div>
                         <Player player={this.state.player} />
 
-                        <div>GAMESET: {this.state.gameset.guid}</div>
+                        <div>GAMESET: <strong>{this.state.gameset.guid}</strong></div>
                         <div>LastActivity: {this.state.gameset.last_activity}</div>
+                        <br/><br/><br/>
 
                         {
                             this.state.gameset.games.map((g) =>

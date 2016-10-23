@@ -67,10 +67,9 @@ class GameSetService
     }
 
     /**
-     * @return null|object
-     * TODO Console task that clears stable locked games.
+     * @return GameSet
      */
-    public function findGameset()
+    public function findGameset() : GameSet
     {
         /** @var GameSet $gameset */
         $gameset = $this->repository->findGamesetByPlayer($this->player);
@@ -83,15 +82,11 @@ class GameSetService
                     return $gameset;
                 }
             }
-
-            $gameset->setLastActivity(new DateTime());
-
-            $this->manager->persist($gameset);
-            $this->manager->flush();
         }
 
         $gameset = $this->repository->findFreeGameSet();
         $gameset->setOwner($this->player);
+        $gameset->setLastActivity(new DateTime());
 
         $this->manager->persist($gameset);
         $this->manager->flush();
