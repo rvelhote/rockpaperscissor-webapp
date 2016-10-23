@@ -25,9 +25,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Player;
-use AppBundle\Repository\ResultRepository;
-use Doctrine\DBAL\Types\Type;
-use Exception;
+use AppBundle\Repository\GameRepository;
+use AppBundle\Repository\GameSetRepository;
+use Doctrine\DBAL\Types\IntegerType;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
  * Class StatsService.
@@ -37,104 +38,87 @@ use Exception;
 class StatsService
 {
     /**
-     *
+     * @var GameRepository Doctrine repository object to access the 'result' table.
      */
-    const WIN = 'win';
+    private $repository;
 
     /**
-     *
+     * @var Player
      */
-    const LOSE = 'lose';
-
-    /**
-     *
-     */
-    const DRAW = 'draw';
-
-    /**
-     * @var ResultRepository Doctrine repository object to access the 'result' table.
-     */
-    private $resultRepository;
+    private $player;
 
     /**
      * StatsService constructor.
-     * @param ResultRepository $resultRepository Doctrine repository object to access the 'result' table.
+     * @param GameSetRepository $resultRepository Doctrine repository object to access the 'result' table.
      */
-    public function __construct(/*ResultRepository $resultRepository*/)
+    public function __construct(GameRepository $repository, TokenStorage $token)
     {
-//        $this->resultRepository = $resultRepository;
+        $this->repository = $repository;
+        $this->player = $token->getToken()->getUser();
     }
 
     /**
-     * Make the query to obtain the result type per player id.
-     * This is a generic method that is called with a parameter to specify which one of the result types we should
-     * obtain. The $type parameter is filtered and validated against a whitelist of possibilities to avoid weird SQL
-     * injection shenanigans.
      *
-     * @param int $id The ID of the player we want to check.
-     * @param string $type The type of result to obtain from the database.
-     *
-     * @return int The amount of results that the user had that are of $type.
-     * @throws Exception If the $type parameter is not on the whitelist ('win', 'lose', 'draw').
      */
-    private function fetch(int $id, string $type) : int
+    public function getGamesetStats()
     {
-        $types = [self::WIN, self::LOSE, self::DRAW];
+//        $query = $this->repository->createQueryBuilder('gameset');
+    }
 
-        if(!in_array($type, $types)) {
-            throw new Exception('Cannot fetch statistics because you specified an invalid type!');
-        }
+    /**
+     *
+     */
+    public function getGameWins()
+    {
+        $query = $this->repository->createQueryBuilder('g');
+        $query->select($query->expr()->count('g.id'));
 
-        $type = trim(mb_strtolower($type));
+        $query->where('g.player1 = :pid AND g.result = :win1');
+        $query->orWhere('g.player2 = :pid AND g.result = :win2');
 
-        $query = $this->resultRepository->createQueryBuilder('w');
-        $query->select($query->expr()->count('w.id'));
+        $query->setParameter(':pid', $this->player->getId(), IntegerType::INTEGER);
+        $query->setParameter(':win1', 1);
+        $query->setParameter(':win2', 2);
 
-        $query->where('w.player = :playerId AND w.'.$type.' = true')->setParameter('playerId', $id, Type::INTEGER);
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * Obtain the total amount of wins for a single player.
-     * @param int $playerId The ID of the player we want to check.
-     * @return int
-     */
-    private function countWinsFor(int $playerId) : int
+    public function getGameLosses()
     {
-        return $this->fetch($playerId, self::WIN);
+        $query = $this->repository->createQueryBuilder('g');
+        $query->select($query->expr()->count('g.id'));
+
+        $query->where('g.player1 = :pid AND g.result = :loss1');
+        $query->orWhere('g.player2 = :pid AND g.result = :loss2');
+
+        $query->setParameter(':pid', $this->player->getId(), IntegerType::INTEGER);
+        $query->setParameter(':loss1', 2);
+        $query->setParameter(':loss2', 1);
+
+        return $query->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * Obtain the total amount of draws for a single player.
-     * @param int $playerId The ID of the player we want to check.
-     * @return int
-     */
-    private function countDrawsFor(int $playerId) : int
+    public function getGameDraws()
     {
-        return $this->fetch($playerId, self::DRAW);
+        $query = $this->repository->createQueryBuilder('g');
+        $query->select($query->expr()->count('g.id'));
+
+        $query->where('g.player1 = :pid AND g.result = :draw1');
+        $query->orWhere('g.player2 = :pid AND g.result = :draw2');
+
+        $query->setParameter(':pid', $this->player->getId(), IntegerType::INTEGER);
+        $query->setParameter(':draw1', 0);
+        $query->setParameter(':draw2', 0);
+
+        return $query->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * Obtain the total amount of losses for a single player.
-     * @param int $playerId The ID of the player we want to check.
-     * @return int
-     */
-    private function countLosesFor(int $playerId) : int
-    {
-        return $this->fetch($playerId, self::LOSE);
-    }
-
-    /**
-     * Obtains all the statistics (wins, losses and draws) for a player in a neatly packed array.
-     * @param Player $player The player that we want to check.
-     * @return array The compiled statistics of a single player.
-     */
-    public function all($player) : array
+    public function getStats()
     {
         return [
-            'win' => 0,
-            'draw' => 0,
-            'lose' => 0,
+            'wins' => $this->getGameWins(),
+            'losses' => $this->getGameLosses(),
+            'draws' => $this->getGameDraws(),
         ];
     }
 }

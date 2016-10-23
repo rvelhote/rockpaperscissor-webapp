@@ -13,7 +13,7 @@ services:
 
   app.service.stats:
     class: AppBundle\Service\StatsService
-#    arguments: ['@app.repository.result']
+    arguments: ['@app.repository.game', '@security.token_storage']
 
   app.service.game:
     class: AppBundle\Service\GameService

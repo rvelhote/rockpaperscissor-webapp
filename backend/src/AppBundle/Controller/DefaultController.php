@@ -145,7 +145,7 @@ class DefaultController extends FOSRestController
         return [
             'user' => $this->getUser(),
             'gameset' => $gameset,
-            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0],
+            'stats' => $this->get('app.service.stats')->getStats(),
         ];
     }
 
@@ -171,7 +171,7 @@ class DefaultController extends FOSRestController
         return [
             'user' => $this->getUser(),
             'gameset' => $this->get('app.service.gameset')->findGameset(),
-            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0],
+            'stats' => $this->get('app.service.stats')->getStats(),
         ];
 
         //$gameset = $gamesetService->findGameset();
