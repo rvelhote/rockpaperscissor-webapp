@@ -94,7 +94,7 @@ class GameComponent extends React.Component {
 
         return fetch(request)
             .then(response => response.json())
-            .then(response => this.setState({ working: false, player: player, stats: response.stats, result: response.result, game: response.game }));
+            .then(response => this.setState({ working: false, player: player, stats: response.stats, gameset: response.gameset }));
     }
 
     requestNewGame() {
@@ -163,6 +163,9 @@ class GameComponent extends React.Component {
                     <div>
                         <Player player={this.state.player} />
 
+                        <div>GAMESET: {this.state.gameset.guid}</div>
+                        <div>LastActivity: {this.state.gameset.last_activity}</div>
+
                         {
                             this.state.gameset.games.map((g) =>
                                 <div key={g.guid}>
@@ -170,7 +173,10 @@ class GameComponent extends React.Component {
 
 
                                         <div>GameName: {g.game_type.name}</div>
-                                        <div>GameName: {g.player2.username}</div>
+                                        <div>Player2 Name: {g.player2.username}</div>
+                                        <div>Date: {g.date_played}</div>
+                                        <div>Result: {g.result}</div>
+
                                     {
                                         g.game_type.move_types.map((m) => {
                                             return <Move key={m.slug}
@@ -198,9 +204,6 @@ class GameComponent extends React.Component {
                     </div>
                 </div>
                 <div>
-                    <div>
-                        GamesetID: {this.state.gameset.guid}
-                    </div>
                     <div>
                         <ul>
                             <li>Opponent played: {this.state.result.move}</li>

@@ -105,9 +105,9 @@ class DefaultController extends FOSRestController
         /** @var MakeMoveForm $playerSubmission */
         $playerSubmission = $playerSubmissionForm->getData();
 
-//        /** @var Player $player */
-//        // TODO Maintain session state instead of hardcoding!
-//        $player = $this->getDoctrine()->getRepository('AppBundle:Player')->find(1);
+        /** @var GameSet $gameset */
+        $criteria = ['guid' => $playerSubmission->getGameset()];
+        $gameset = $this->getDoctrine()->getRepository('AppBundle:GameSet')->findOneBy($criteria);
 
         /** @var Game $game */
         $criteria = ['guid' => $playerSubmission->getGame()];
@@ -129,7 +129,6 @@ class DefaultController extends FOSRestController
             $game->setResult(2);
         }
 
-
         // Update the game definition with the data of the player that played the game
         $game->setPlayer1($this->getUser());
         $game->setMovePlayer1($move);
@@ -138,24 +137,14 @@ class DefaultController extends FOSRestController
         $this->getDoctrine()->getEntityManager()->persist($game);
         $this->getDoctrine()->getEntityManager()->flush();
 
-//        /** @var GameService $g */
-//        $ggg = $this->get('app.service.game');
 
-//        $newGame = [
-//            'game' => $ggg->getGame(),
-//            'result' => [
-//                'opponent' => $game->getPlayer2()->getUsername(),
-//                'move' => $game->getMovePlayer2()->getName(),
-//                'winner' => (!$result instanceof Tie && $result->getWinner()->getPlay() === $move->getSlug()),
-//                'tied' => ($result instanceof Tie),
-//                'outcome' => ($result instanceof Tie) ? 'Tie' : $result->getRule()->getText(),
-//            ],
-//            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
-//        ];
+        $gameset->setLastActivity(new DateTime());
+        $this->getDoctrine()->getEntityManager()->persist($gameset);
+        $this->getDoctrine()->getEntityManager()->flush();
 
         return [
             'user' => $this->getUser(),
-            'gameset' => $this->get('app.service.gameset')->findGameset(),
+            'gameset' => $gameset,
             'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0],
         ];
     }

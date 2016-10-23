@@ -24,6 +24,7 @@
  */
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Player;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -38,7 +39,16 @@ class GameSetRepository extends EntityRepository
      */
     public function findFreeGameSet()
     {
-        $criteria = ['locked' => false];
+        $criteria = ['owner' => null];
+        return $this->findOneBy($criteria);
+    }
+
+    /**
+     * @param Player $player
+     * @return null|object
+     */
+    public function findGamesetByPlayer(Player $player) {
+        $criteria = ['owner' => $player->getId()];
         return $this->findOneBy($criteria);
     }
 }

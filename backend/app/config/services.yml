@@ -21,7 +21,7 @@ services:
 
   app.service.gameset:
     class: AppBundle\Service\GameSetService
-    arguments: ['@app.repository.gameset', '@doctrine.orm.entity_manager']
+    arguments: ['@app.repository.gameset', '@doctrine.orm.entity_manager', '@security.token_storage']
 
   app.repository:
     class: Doctrine\ORM\EntityRepository

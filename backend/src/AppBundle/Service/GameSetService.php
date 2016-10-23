@@ -24,9 +24,14 @@
  */
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Game;
 use AppBundle\Entity\GameSet;
+use AppBundle\Entity\Player;
 use AppBundle\Repository\GameSetRepository;
+use DateTime;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\User\User;
 
 /**
  * Class GameSetService
@@ -45,14 +50,20 @@ class GameSetService
     private $manager;
 
     /**
+     * @var Player
+     */
+    private $player;
+
+    /**
      * GameSetService constructor.
      * @param GameSetRepository $repository
      * @param EntityManager $manager
      */
-    public function __construct(GameSetRepository $repository, EntityManager $manager)
+    public function __construct(GameSetRepository $repository, EntityManager $manager, TokenStorage $token)
     {
         $this->repository = $repository;
         $this->manager = $manager;
+        $this->player = $token->getToken()->getUser();
     }
 
     /**
@@ -62,8 +73,25 @@ class GameSetService
     public function findGameset()
     {
         /** @var GameSet $gameset */
+        $gameset = $this->repository->findGamesetByPlayer($this->player);
+
+        // FIXME Just a quick fix to get us going quickly. Redo this part and turn it into a query.
+        if(!is_null($gameset)) {
+            foreach($gameset->getGames() as $game) {
+                /** @var Game $game */
+                if(is_null($game->getResult())) {
+                    return $gameset;
+                }
+            }
+
+            $gameset->setLastActivity(new DateTime());
+
+            $this->manager->persist($gameset);
+            $this->manager->flush();
+        }
+
         $gameset = $this->repository->findFreeGameSet();
-        $gameset->setLocked(true);
+        $gameset->setOwner($this->player);
 
         $this->manager->persist($gameset);
         $this->manager->flush();

@@ -62,7 +62,12 @@ class Player implements UserInterface
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="GameSet", mappedBy="owner")
+     */
+    private $gamesets;
+
     /**
      * Get id
      *
@@ -187,5 +192,46 @@ class Player implements UserInterface
     public function eraseCredentials()
     {
         return null;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->gamesets = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add gameset
+     *
+     * @param \AppBundle\Entity\GameSet $gameset
+     *
+     * @return Player
+     */
+    public function addGameset(\AppBundle\Entity\GameSet $gameset)
+    {
+        $this->gamesets[] = $gameset;
+
+        return $this;
+    }
+
+    /**
+     * Remove gameset
+     *
+     * @param \AppBundle\Entity\GameSet $gameset
+     */
+    public function removeGameset(\AppBundle\Entity\GameSet $gameset)
+    {
+        $this->gamesets->removeElement($gameset);
+    }
+
+    /**
+     * Get gamesets
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGamesets()
+    {
+        return $this->gamesets;
     }
 }

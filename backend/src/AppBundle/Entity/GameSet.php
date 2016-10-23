@@ -24,6 +24,7 @@
  */
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
@@ -54,10 +55,16 @@ class GameSet
     private $guid;
 
     /**
-     * @var bool
-     * @ORM\Column(name="locked", type="boolean", nullable=true, options={"default": false})
+     * @ORM\ManyToOne(targetEntity="Player", inversedBy="gamesets")
      */
-    private $locked;
+    private $owner;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(name="lastActivity", type="datetimetz", nullable=true)
+     * @Expose
+     */
+    private $lastActivity;
 
     /**
      * @ORM\OneToMany(targetEntity="Game", mappedBy="gameSet", cascade={"persist"})
@@ -107,27 +114,51 @@ class GameSet
     }
 
     /**
-     * Set locked
+     * Set lastActivity
      *
-     * @param boolean $locked
+     * @param \DateTime $lastActivity
      *
      * @return GameSet
      */
-    public function setLocked($locked)
+    public function setLastActivity($lastActivity)
     {
-        $this->locked = $locked;
+        $this->lastActivity = $lastActivity;
 
         return $this;
     }
 
     /**
-     * Get locked
+     * Get lastActivity
      *
-     * @return boolean
+     * @return \DateTime
      */
-    public function getLocked()
+    public function getLastActivity()
     {
-        return $this->locked;
+        return $this->lastActivity;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param \AppBundle\Entity\Player $owner
+     *
+     * @return GameSet
+     */
+    public function setOwner(\AppBundle\Entity\Player $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \AppBundle\Entity\Player
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 
     /**
