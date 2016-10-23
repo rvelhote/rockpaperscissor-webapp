@@ -26,49 +26,28 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Game;
 use AppBundle\Entity\GameSet;
-use AppBundle\Entity\Player;
-use AppBundle\Entity\Result as ResultEntity;
-use AppBundle\Repository\GameRepository;
-use AppBundle\Service\GameService;
-use AppBundle\Service\GameSetService;
-use AppBundle\Service\PlayerService;
-use AppBundle\Service\StatsService;
-use Balwan\RockPaperScissor\Game\Result\Tie;
-use DateTime;
-use Exception;
-use FOS\RestBundle\Controller\FOSRestController;
-use Ramsey\Uuid\Uuid;
-use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
 use AppBundle\Form\MakeMoveForm;
 use AppBundle\Service\GameEngine;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use FOS\RestBundle\Controller\Annotations\View;
-use FOS\RestBundle\Controller\Annotations\Post;
+use Balwan\RockPaperScissor\Game\Result\Tie;
+use DateTime;
 use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\View;
+use FOS\RestBundle\Controller\FOSRestController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
+
 
 /**
- * Class DefaultController
+ * Class GameplayController
  * @package AppBundle\Controller
- *
  */
 class GameplayController extends FOSRestController
 {
     /**
-     *
-     *
-     *
      * @Post("/api/v1/play", name="play", options={ "method_prefix" = false })
      * @View(serializerGroups={"Default"})
-     *
-     *
      */
     public function playAction(Request $request)
     {
@@ -139,38 +118,15 @@ class GameplayController extends FOSRestController
     }
 
     /**
-     *
-     *
-     *
      * @Get("/api/v1/game", name="game", options={ "method_prefix" = false })
-     *
      * @View(serializerGroups={"Default"})
-     *
-     *
      */
     public function gameAction(Request $request)
     {
-//        /** @var PlayerService $player */
-//        $player = $this->get('app.service.player');
-
-        /** @var GameService $g */
-//        $game = $this->get('app.service.game');
-
-
         return [
             'user' => $this->getUser(),
             'gameset' => $this->get('app.service.gameset')->findGameset(),
             'stats' => $this->get('app.service.stats')->getStats(),
         ];
-
-        //$gameset = $gamesetService->findGameset();
-
-        //$games = $gameset->getGames();
-
-
-
-//            'game' => $gamesetService,
-//            'stats' => ['win' => 0, 'draw' => 0, 'lose' => 0,],
-//        ]);
     }
 }
