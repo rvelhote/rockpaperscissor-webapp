@@ -28,8 +28,6 @@ import Player from './PlayerComponent';
 import Move from './MoveComponent';
 import Stats from './StatsComponent';
 
-import '../styles/Game.css';
-
 class GameComponent extends React.Component {
     constructor(props) {
         super(props);

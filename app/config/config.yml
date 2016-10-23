@@ -73,7 +73,7 @@ lexik_jwt_authentication:
 fos_rest:
     format_listener:
         rules:
-          - priorities: [json]
+          - priorities: [json, html]
     view:
         view_response_listener: true
         formats:
@@ -81,7 +81,7 @@ fos_rest:
             jsonp: false
             json : true
         templating_formats:
-            html: false
+            html: true
     routing_loader:
         default_format: json
     serializer:

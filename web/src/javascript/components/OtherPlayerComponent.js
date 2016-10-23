@@ -23,24 +23,27 @@
  */
 // 'use strict';
 
-// require('normalize.css/normalize.css');
-// require('flexboxgrid/dist/flexboxgrid.css');
-
-require('../styles/App.css');
-
 import React from 'react';
-import GameComponent from './GameComponent';
 
-class AppComponent extends React.Component {
+class OtherPlayerComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { player: props.player };
+    }
+
     render() {
         return (
-            <main className="container">
-                <GameComponent />
-            </main>
+            <div>
+                {this.state.player.name}: { this.state.player.move }
+            </div>
         );
     }
 }
 
-AppComponent.defaultProps = {};
+OtherPlayerComponent.displayName = 'OtherPlayerComponent';
 
-export default AppComponent;
+// Uncomment properties you need
+OtherPlayerComponent.propTypes = { player: React.PropTypes.object };
+OtherPlayerComponent.defaultProps = { player: { name: 'Unknown' } };
+
+export default OtherPlayerComponent;

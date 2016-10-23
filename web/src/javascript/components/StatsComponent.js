@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-require('../styles/Stats.css');
-
 let StatsComponent = (props) => (
   <div className="stats">
     W: {props.win}<br/>

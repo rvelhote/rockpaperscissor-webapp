@@ -1,12 +1,12 @@
 version: "2"
 services:
-  node:
-    container_name: rockpaperscissor-webapp-node
-    image: rockpaperscissor-webapp-node
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/opt/application
+#  node:
+#    container_name: rockpaperscissor-webapp-node
+#    image: rockpaperscissor-webapp-node
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./frontend:/opt/application
 
   apache:
     container_name: rockpaperscissor-webapp-apache
@@ -14,11 +14,11 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./backend:/opt/application
+      - .:/opt/application
     links:
       - php
-    depends_on:
-      - node
+#    depends_on:
+#      - node
 
   php:
     container_name: rockpaperscissor-webapp-php
@@ -27,7 +27,7 @@ services:
       - "9000:9000"
       - "22:22"
     volumes:
-      - ./backend:/opt/application
+      - .:/opt/application
     links:
       - db
       - mailhog

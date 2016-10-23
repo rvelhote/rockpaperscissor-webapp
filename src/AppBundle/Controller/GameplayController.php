@@ -59,19 +59,8 @@ use FOS\RestBundle\Controller\Annotations\Get;
  * @package AppBundle\Controller
  *
  */
-class DefaultController extends FOSRestController
+class GameplayController extends FOSRestController
 {
-    /**
-     * @Method({"GET"})
-     * @Route("/", name="homepage")
-     */
-    public function indexAction()
-    {
-        return new Response('Forbidden... for now :)', 403);
-    }
-
-
-
     /**
      *
      *

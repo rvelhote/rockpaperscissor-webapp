@@ -25,13 +25,11 @@
 
 import React from 'react';
 
-require('../styles//Player.css');
-
-let defaultPerson = require('../images/ic_face_black_48dp_2x.png');
+// let defaultPerson = require('../images/ic_face_black_48dp_2x.png');
 
 let PlayerComponent = (props) => (
     <div className="player-component">
-        <img alt={ props.player.handle } className="img-responsive picture" src={defaultPerson} />
+        {/*<img alt={ props.player.handle } className="img-responsive picture" src={defaultPerson} />*/}
         <div className="uuid">{ props.player.uuid }</div>
         <div className="name">{ props.player.handle }</div>
     </div>

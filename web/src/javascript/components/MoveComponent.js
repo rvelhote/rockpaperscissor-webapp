@@ -4,7 +4,7 @@
  * Copyright (c) 2016 Ricardo Velhote
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the 'Software'), to deal
+ * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -25,27 +25,18 @@
 
 import React from 'react';
 
-require('../styles/OtherPlayer.css');
+let MoveComponent = (props) => (
+    <div className="move-component">
+        <button disabled={ props.disabled ? 'disabled' : null } className="move" type="button" onClick={(e) => props.onPlayClick(props.gameset, props.game, props.name)}>
+            <img alt={ props.name } src={ '/images/' + props.name + '.png' }/>
+        </button>
+    </div>
+);
 
-class OtherPlayerComponent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { player: props.player };
-    }
-
-    render() {
-        return (
-            <div>
-                {this.state.player.name}: { this.state.player.move }
-            </div>
-        );
-    }
-}
-
-OtherPlayerComponent.displayName = 'OtherPlayerComponent';
+MoveComponent.displayName = 'MoveComponent';
 
 // Uncomment properties you need
-OtherPlayerComponent.propTypes = { player: React.PropTypes.object };
-OtherPlayerComponent.defaultProps = { player: { name: 'Unknown' } };
+// MoveComponent.propTypes = {};
+// MoveComponent.defaultProps = {};
 
-export default OtherPlayerComponent;
+export default MoveComponent;
