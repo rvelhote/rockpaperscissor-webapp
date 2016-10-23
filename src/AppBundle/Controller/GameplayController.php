@@ -102,13 +102,13 @@ class GameplayController extends FOSRestController
         $game->setMovePlayer1($move);
         $game->setDatePlayed(new DateTime());
 
-        $this->getDoctrine()->getEntityManager()->persist($game);
-        $this->getDoctrine()->getEntityManager()->flush();
+        $this->getDoctrine()->getManager()->persist($game);
+        $this->getDoctrine()->getManager()->flush();
 
 
         $gameset->setLastActivity(new DateTime());
-        $this->getDoctrine()->getEntityManager()->persist($gameset);
-        $this->getDoctrine()->getEntityManager()->flush();
+        $this->getDoctrine()->getManager()->persist($gameset);
+        $this->getDoctrine()->getManager()->flush();
 
         return [
             'user' => $this->getUser(),
@@ -121,7 +121,7 @@ class GameplayController extends FOSRestController
      * @Get("/api/v1/game", name="game", options={ "method_prefix" = false })
      * @View(serializerGroups={"Default"})
      */
-    public function gameAction(Request $request)
+    public function gameAction()
     {
         return [
             'user' => $this->getUser(),
