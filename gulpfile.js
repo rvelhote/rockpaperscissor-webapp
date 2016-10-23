@@ -16,7 +16,7 @@ const handleWebpackOutput = (err, stats) => {
 };
 
 const options = {
-    entryPoints: { 'vendor': ['react', 'react-dom'], 'main': __dirname + '/web/src/javascript/index.js' },
+    entryPoints: { 'vendor': ['react', 'react-dom'], 'main': __dirname + '/web/src/javascript/index.jsx' },
     outputDir: __dirname + '/web/dist/javascript',
     plugins: [
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js')
@@ -29,7 +29,7 @@ const sassOptions = {
 };
 
 gulp.task('javascript:development', function() {
-    gulp.src('web/src/javascript/index.js')
+    gulp.src('web/src/javascript/index.jsx')
         .pipe(gulpWebpack(webpackConfig(options)))
         .pipe(gulp.dest('web/dist/javascript'));
 });

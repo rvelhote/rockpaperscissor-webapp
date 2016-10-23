@@ -25,28 +25,23 @@
 
 import React from 'react';
 
-// let defaultPerson = require('../images/ic_face_black_48dp_2x.png');
-
-let PlayerComponent = (props) => (
-    <div className="player-component">
-        {/*<img alt={ props.player.handle } className="img-responsive picture" src={defaultPerson} />*/}
-        <div className="uuid">{ props.player.uuid }</div>
-        <div className="name">{ props.player.handle }</div>
-    </div>
+const PlayerComponent = props => (
+  <div className="player-component">
+    <div className="uuid">{props.player.uuid}</div>
+    <div className="name">{props.player.handle}</div>
+  </div>
 );
 
-// class PlayerComponent extends React.Component {
-//     render() {
-//         return (
-//
-//         );
-//     }
-// }
 
 PlayerComponent.displayName = 'PlayerComponent';
 
-// Uncomment properties you need
-// PlayerComponent.propTypes = {};
-// PlayerComponent.defaultProps = {};
+PlayerComponent.propTypes = {
+  player: React.PropTypes.shape({
+    uuid: React.PropTypes.string,
+    handle: React.PropTypes.string
+  })
+};
+
+PlayerComponent.defaultProps = {};
 
 export default PlayerComponent;

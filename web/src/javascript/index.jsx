@@ -21,22 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-// 'use strict';
-
 import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/Main';
 
-let MoveComponent = (props) => (
-    <div className="move-component">
-        <button disabled={ props.disabled ? 'disabled' : null } className="move" type="button" onClick={(e) => props.onPlayClick(props.gameset, props.game, props.name)}>
-            <img alt={ props.name } src={ '/images/' + props.name + '.png' }/>
-        </button>
-    </div>
-);
-
-MoveComponent.displayName = 'MoveComponent';
-
-// Uncomment properties you need
-// MoveComponent.propTypes = {};
-// MoveComponent.defaultProps = {};
-
-export default MoveComponent;
+// Render the main component into the dom
+ReactDOM.render(<App />, document.getElementById('app'));
