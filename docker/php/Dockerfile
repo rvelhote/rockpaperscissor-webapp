@@ -33,6 +33,12 @@ RUN php -r "file_put_contents('symfony', file_get_contents('https://symfony.com/
     mv symfony /usr/local/bin/symfony && \
     chmod a+x /usr/local/bin/symfony
 
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php && \
+    php -r "unlink('composer-setup.php');" && \
+    mv composer.phar /usr/local/bin/composer && \
+    chmod a+x /usr/local/bin/composer
+
 # Overidden configuration files
 COPY conf /
 
