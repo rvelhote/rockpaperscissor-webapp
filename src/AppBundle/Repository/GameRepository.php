@@ -32,8 +32,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class GameRepository extends EntityRepository
 {
+    /**
+     * @param string $guid
+     * @return null|object
+     */
     public function findByGuid(string $guid)
     {
-
+        $criteria = ['guid' => $guid];
+        return $this->findOneBy($criteria);
     }
 }

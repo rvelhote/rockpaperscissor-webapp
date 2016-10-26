@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class MakeMoveForm
  * @package AppBundle\Form
- * @AppBundle\Validator\Constraints\MoveBelongsToGameType()
+ * @AppBundle\Validator\Constraints\FullGameplayConstraint()
  */
 class MakeMoveForm
 {
@@ -41,14 +41,12 @@ class MakeMoveForm
 
     /**
      * @Assert\NotBlank()
-     * AppBundle\Validator\Constraints\GameGuidExists()
      * @var string
      */
     protected $game = '';
 
     /**
      * @Assert\NotBlank()
-     * AppBundle\Validator\Constraints\MoveExists()
      * @var string
      */
     protected $move = '';

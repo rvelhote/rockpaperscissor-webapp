@@ -24,47 +24,40 @@
  */
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Repository\GameRepository;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * Class GameGuidExistsValidator
+ * Class MoveBelongsToGameType
  * @package AppBundle\Validator\Constraints
+ * @Annotation
  */
-class GameGuidExistsValidator extends ConstraintValidator
+class FullGameplayConstraint extends Constraint
 {
     /**
-     * @var GameRepository Doctrine repository to access the database.
+     * @var string
      */
-    private $repository;
+    public $gamesetDoesNotExist = 'The gameset with the GUID :guid does not exist.';
 
     /**
-     * GameGuidExistsValidator constructor.
-     * @param GameRepository $repository
+     * @var string
      */
-    public function __construct(GameRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public $gamesetWrongOwner = 'You do not own the gameset with GUID :guid';
 
     /**
-     * Checks if the passed value is valid.
-     * Verify that the game GUID exists in the database and is playable.
-     *
-     * @param mixed $value The value that should be validated.
-     * @param Constraint $constraint The constraint for the validation.
-     *
-     * @throws \Exception
+     * @var string
      */
-    public function validate($value, Constraint $constraint)
+    public $gameDoesNotExist = 'The game with the GUID :guid does not exist.';
+
+    /**
+     * @var string
+     */
+    public $gameDoesNotBelongToGameset = 'The game with the GUID :gameGuid does not belong to the gameset :gameGuid';
+
+    /**
+     * @return string
+     */
+    public function getTargets()
     {
-        $game = $this->repository->findOneBy(['guid' => $value]);
-        if (is_null($game)) {
-            $this->context
-                ->buildViolation($constraint->message)
-                ->setParameter('%guid%', $value)
-                ->addViolation();
-        }
+        return self::CLASS_CONSTRAINT;
     }
 }

@@ -26,6 +26,7 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Player;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * Class GameSetRepository
@@ -47,9 +48,16 @@ class GameSetRepository extends EntityRepository
      * @param Player $player
      * @return null|object
      */
-    public function findGamesetByPlayer(Player $player) {
+    public function findGamesetByPlayer(Player $player)
+    {
         $criteria = ['owner' => $player->getId()];
         $orderBy = ['lastActivity' => 'DESC'];
         return $this->findOneBy($criteria, $orderBy);
+    }
+
+    public function findGamesetByGuid(string $gamesetGuid)
+    {
+        $criteria = ['guid' => $gamesetGuid];
+        return $this->findOneBy($criteria);
     }
 }

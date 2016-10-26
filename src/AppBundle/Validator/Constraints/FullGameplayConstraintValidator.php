@@ -25,39 +25,38 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Game;
+use AppBundle\Entity\GameSet;
 use AppBundle\Entity\MoveType;
 use AppBundle\Form\MakeMoveForm;
 use AppBundle\Repository\GameRepository;
+use AppBundle\Repository\GameSetRepository;
 use AppBundle\Repository\MoveTypeRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * Class MoveBelongsToGameTypeValidator
+ * Class FullGameplayConstraintValidator
  * @package AppBundle\Validator\Constraints
  */
-class MoveBelongsToGameTypeValidator extends ConstraintValidator
+class FullGameplayConstraintValidator extends ConstraintValidator
 {
     /**
-     * @var GameRepository Doctrine repository to access the database.
+     * @var GameSetRepository
+     */
+    private $repository;
+
+    /**
+     * @var GameRepository
      */
     private $gameRepository;
 
     /**
-     * @var MoveTypeRepository
+     * FullGameplayConstraintValidator constructor.
+     * @param GameSetRepository $repository
      */
-    private $moveTypeRepository;
-
-    /**
-     * GameGuidExistsValidator constructor.
-     * @param GameRepository $gameRepository
-     * @param MoveTypeRepository $moveTypeRepository
-     * @internal param GameRepository $repository
-     */
-    public function __construct(GameRepository $gameRepository, MoveTypeRepository $moveTypeRepository)
-    {
+    public function __construct(GameSetRepository $repository, GameRepository $gameRepository) {
+        $this->repository = $repository;
         $this->gameRepository = $gameRepository;
-        $this->moveTypeRepository = $moveTypeRepository;
     }
 
     /**
@@ -73,32 +72,38 @@ class MoveBelongsToGameTypeValidator extends ConstraintValidator
      */
     public function validate($form, Constraint $constraint)
     {
-        $moveTypeExists = false;
+        /** @var GameSet $gameset */
+        $gameset = $this->repository->findGamesetByGuid($form->getGameset());
 
         /** @var Game $game */
-        $game = $this->gameRepository->findOneBy(['guid' => $form->getGame()]);
+        $game = $this->gameRepository->findByGuid($form->getGame());
 
-        /** @var MoveType $move */
-        $move = $this->moveTypeRepository->findOneBy(['slug' => $form->getMove()]);
-
-        if(!is_null($game)) {
-            $moveTypes = $game->getGameType()->getMoveTypes();
-
-            /** @var MoveType $moveType */
-            foreach($moveTypes as $moveType) {
-                if($moveType->getSlug() == $move->getSlug()) {
-                    $moveTypeExists = true;
-                    break;
-                }
-            }
+        if (is_null($gameset)) {
+            $this->context
+                ->buildViolation($constraint->gamesetDoesNotExist)
+                ->setParameter(':guid', $form->getGameset())
+                ->addViolation();
         }
 
-        // FIXME No violation is set if the game doesn't exist however it's caught by the GameGuidExists validator.
-        if(!is_null($game) && !$moveTypeExists) {
+        if(!is_null($gameset) && $gameset->getOwner()->getId() != 1) {
             $this->context
-                ->buildViolation($constraint->message)
-                ->setParameter('%move%', mb_strtoupper($form->getMove()))
-                ->setParameter('%type%', $game->getGameType()->getName())
+                ->buildViolation($constraint->gamesetWrongOwner)
+                ->setParameter(':guid', $form->getGameset())
+                ->addViolation();
+        }
+
+        if(is_null($game)) {
+            $this->context
+                ->buildViolation($constraint->gameDoesNotExist)
+                ->setParameter(':guid', $form->getGame())
+                ->addViolation();
+        }
+
+        if(!is_null($gameset) && !$gameset->getGames()->contains($game)) {
+            $this->context
+                ->buildViolation($constraint->gameDoesNotBelongToGameset)
+                ->setParameter(':gameGuid', $form->getGame())
+                ->setParameter(':gamesetGuid', $form->getGameset())
                 ->addViolation();
         }
     }
