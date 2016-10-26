@@ -24,41 +24,27 @@
  */
 namespace Tests\AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Tests\AppBundle\AuthenticatedWebTestCase;
 
 /**
  * Class GameplayControllerTest
  * @package Tests\AppBundle\Controller
  */
-class GameplayControllerTest extends WebTestCase
+class GameplayControllerTest extends AuthenticatedWebTestCase
 {
     /**
-     * Create a client with a default Authorization header.
-     *
-     * @param string $username
-     * @param string $password
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
-    protected function createAuthenticatedClient($username = '@rvelhote', $password = 'x')
+    private $client;
+
+    public function setUp()
     {
-        $client = static::createClient();
-        $client->request(
-            'POST',
-            '/api/v1/login',
-            array(
-                '_username' => $username,
-                '_password' => $password,
-            )
-        );
-
-        $data = json_decode($client->getResponse()->getContent(), true);
-
-        $client = static::createClient();
-        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $data['token']));
-
-        return $client;
+        parent::setUp();
+        $this->client = $this->createAuthenticatedClient();
     }
 
     /**
@@ -86,15 +72,27 @@ class GameplayControllerTest extends WebTestCase
     }
 
     /**
-     * @test Make sure that authenticated requests to the API work.
+     * @test Make sure that authenticated requests to obtain a new game are working and have the correct data.
      */
     public function testAuthenticatedRequestToGameAction()
     {
-        $client = $this->createAuthenticatedClient();
-        $url = $client->getContainer()->get('router')->generate('game');
+        $url = $this->client->getContainer()->get('router')->generate('game');
 
-        $client->request(Request::METHOD_GET, $url, [], [], ['HTTP_ACCEPT' => 'application/json']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->client->request(Request::METHOD_GET, $url, [], [], ['HTTP_ACCEPT' => 'application/json']);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $encoded = $this->client->getResponse()->getContent();
+
+        $decoder = new JsonDecode();
+        $decoded = $decoder->decode($encoded, JsonEncoder::FORMAT, ['json_decode_associative' => true]);
+
+        $this->assertCount(3, $decoded);
+
+        $keys = ['user', 'gameset', 'stats'];
+        foreach($keys as $key) {
+            $this->assertArrayHasKey($key, $decoded);
+            $this->assertNotNull($decoded[$key]);
+        }
     }
 
     /**
@@ -102,13 +100,11 @@ class GameplayControllerTest extends WebTestCase
      */
     public function testAuthenticatedRequestToPlayAction()
     {
-        $client = $this->createAuthenticatedClient();
+        $url = $this->client->getContainer()->get('router')->generate('game');
+        $this->client->request(Request::METHOD_GET, $url, [], [], ['HTTP_ACCEPT' => 'application/json']);
 
-        $url = $client->getContainer()->get('router')->generate('game');
-        $client->request(Request::METHOD_GET, $url, [], [], ['HTTP_ACCEPT' => 'application/json']);
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $gameset = json_decode($client->getResponse()->getContent());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $gameset = json_decode($this->client->getResponse()->getContent());
 
         $params = [
             'form' => [
@@ -118,9 +114,9 @@ class GameplayControllerTest extends WebTestCase
             ]
         ];
 
-        $url = $client->getContainer()->get('router')->generate('play');
+        $url = $this->client->getContainer()->get('router')->generate('play');
 
-        $client->request(Request::METHOD_POST, $url, $params, [], ['HTTP_ACCEPT' => 'application/json']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->client->request(Request::METHOD_POST, $url, $params, [], ['HTTP_ACCEPT' => 'application/json']);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 }
