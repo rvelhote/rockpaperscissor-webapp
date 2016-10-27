@@ -128,6 +128,12 @@ class FullGameplayConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
+        if(!is_null($game) && !is_null($game->getDatePlayed())) {
+            $this->context
+                ->buildViolation('This game was already played. You cannot replay it.')
+                ->addViolation();
+        }
+
         if(is_null($move)) {
             $this->context
                 ->buildViolation($constraint->moveDoesNotExist)
