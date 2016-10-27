@@ -27,10 +27,12 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\Entity\Game;
 use AppBundle\Entity\GameSet;
 use AppBundle\Entity\MoveType;
+use AppBundle\Entity\Player;
 use AppBundle\Form\MakeMoveForm;
 use AppBundle\Repository\GameRepository;
 use AppBundle\Repository\GameSetRepository;
 use AppBundle\Repository\MoveTypeRepository;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -56,15 +58,22 @@ class FullGameplayConstraintValidator extends ConstraintValidator
     private $moveTypeRepository;
 
     /**
+     * @var Player
+     */
+    private $player;
+
+    /**
      * FullGameplayConstraintValidator constructor.
      * @param GameSetRepository $gsr
      * @param GameRepository $gre
      * @param MoveTypeRepository $mtr
+     * @param TokenStorage $token
      */
-    public function __construct(GameSetRepository $gsr, GameRepository $gre, MoveTypeRepository $mtr) {
+    public function __construct(GameSetRepository $gsr, GameRepository $gre, MoveTypeRepository $mtr, TokenStorage $token) {
         $this->gamesetRepository = $gsr;
         $this->gameRepository = $gre;
         $this->moveTypeRepository = $mtr;
+        $this->player = $token->getToken()->getUser();
     }
 
     /**
@@ -97,8 +106,7 @@ class FullGameplayConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        // TODO Do not hardcode the user ID
-        if(!is_null($gameset) && $gameset->getOwner()->getId() != 1) {
+        if(!is_null($gameset) && $gameset->getOwner()->getId() != $this->player->getId()) {
             $this->context
                 ->buildViolation($constraint->wrongOwner)
                 ->setParameter(':guid', $form->getGameset())
