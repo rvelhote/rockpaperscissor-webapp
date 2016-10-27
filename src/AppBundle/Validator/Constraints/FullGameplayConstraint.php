@@ -36,22 +36,32 @@ class FullGameplayConstraint extends Constraint
     /**
      * @var string
      */
-    public $gamesetDoesNotExist = 'The gameset with the GUID :guid does not exist.';
+    public $gamesetDoesNotExist = 'The gameset (:guid) does not exist.';
 
     /**
      * @var string
      */
-    public $gamesetWrongOwner = 'You do not own the gameset with GUID :guid';
+    public $wrongOwner = 'You do not own the gameset (:guid) you are trying to play.';
 
     /**
      * @var string
      */
-    public $gameDoesNotExist = 'The game with the GUID :guid does not exist.';
+    public $gameDoesNotExist = 'This game (:guid) does not exist.';
 
     /**
      * @var string
      */
-    public $gameDoesNotBelongToGameset = 'The game with the GUID :gameGuid does not belong to the gameset :gameGuid';
+    public $wrongGameset = 'The game you are trying to play (:gameGuid) does not belong to the gameset (:gamesetGuid)';
+
+    /**
+     * @var string
+     */
+    public $moveDoesNotExist = 'The move ":move" does not exist.';
+
+    /**
+     * @var string
+     */
+    public $wrongMove = 'The move ":move" does not belong in the game type specified by this game.';
 
     /**
      * @return string

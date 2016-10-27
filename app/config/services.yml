@@ -50,6 +50,6 @@ services:
 
   validator.full_gameplay_constraint:
     class: AppBundle\Validator\Constraints\FullGameplayConstraintValidator
-    arguments: ['@app.repository.gameset', '@app.repository.game']
+    arguments: ['@app.repository.gameset', '@app.repository.game', '@app.repository.move_type']
     tags:
       - { name: validator.constraint_validator }

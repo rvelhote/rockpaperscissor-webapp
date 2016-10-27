@@ -43,7 +43,7 @@ class FullGameplayConstraintValidator extends ConstraintValidator
     /**
      * @var GameSetRepository
      */
-    private $repository;
+    private $gamesetRepository;
 
     /**
      * @var GameRepository
@@ -51,32 +51,44 @@ class FullGameplayConstraintValidator extends ConstraintValidator
     private $gameRepository;
 
     /**
-     * FullGameplayConstraintValidator constructor.
-     * @param GameSetRepository $repository
+     * @var MoveTypeRepository
      */
-    public function __construct(GameSetRepository $repository, GameRepository $gameRepository) {
-        $this->repository = $repository;
-        $this->gameRepository = $gameRepository;
+    private $moveTypeRepository;
+
+    /**
+     * FullGameplayConstraintValidator constructor.
+     * @param GameSetRepository $gsr
+     * @param GameRepository $gre
+     * @param MoveTypeRepository $mtr
+     */
+    public function __construct(GameSetRepository $gsr, GameRepository $gre, MoveTypeRepository $mtr) {
+        $this->gamesetRepository = $gsr;
+        $this->gameRepository = $gre;
+        $this->moveTypeRepository = $mtr;
     }
 
     /**
-     * Checks if the passed value is valid.
-     * Verify that the game GUID exists in the database and is playable.
+     * This validator checks if the parameters that the client sent are valid. Various checks and cross-checks are
+     * made between the POSTed form content and the gameset, game and move.
      *
-     * @param MakeMoveForm $form The value that should be validated.
-     * @param Constraint $constraint The constraint for the validation.
+     * Due to the fact that this validator involves all of the input it was not possible to make an individual
+     * validator without having too much repeated code and many extra queries (although there are already many as is).
      *
-     * @throws \Exception
+     * @param MakeMoveForm $form The form that will be validated.
+     * @param Constraint $constraint The validation constraint definition with all the messages.
      *
-     * TODO Replace by a query instead of looping and getting things. Much easier ;)
+     * TODO Split this validator into various ClassConstraint validators?
      */
     public function validate($form, Constraint $constraint)
     {
         /** @var GameSet $gameset */
-        $gameset = $this->repository->findGamesetByGuid($form->getGameset());
+        $gameset = $this->gamesetRepository->findGamesetByGuid($form->getGameset());
 
         /** @var Game $game */
         $game = $this->gameRepository->findByGuid($form->getGame());
+
+        /** @var MoveType $move */
+        $move = $this->moveTypeRepository->findBySlug($form->getMove());
 
         if (is_null($gameset)) {
             $this->context
@@ -85,9 +97,10 @@ class FullGameplayConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
+        // TODO Do not hardcode the user ID
         if(!is_null($gameset) && $gameset->getOwner()->getId() != 1) {
             $this->context
-                ->buildViolation($constraint->gamesetWrongOwner)
+                ->buildViolation($constraint->wrongOwner)
                 ->setParameter(':guid', $form->getGameset())
                 ->addViolation();
         }
@@ -101,9 +114,23 @@ class FullGameplayConstraintValidator extends ConstraintValidator
 
         if(!is_null($gameset) && !$gameset->getGames()->contains($game)) {
             $this->context
-                ->buildViolation($constraint->gameDoesNotBelongToGameset)
+                ->buildViolation($constraint->wrongGameset)
                 ->setParameter(':gameGuid', $form->getGame())
                 ->setParameter(':gamesetGuid', $form->getGameset())
+                ->addViolation();
+        }
+
+        if(is_null($move)) {
+            $this->context
+                ->buildViolation($constraint->moveDoesNotExist)
+                ->setParameter(':move', $form->getMove())
+                ->addViolation();
+        }
+
+        if(!is_null($game) && !$game->getGameType()->getMoveTypes()->contains($move)) {
+            $this->context
+                ->buildViolation($constraint->wrongMove)
+                ->setParameter(':move', $form->getMove())
                 ->addViolation();
         }
     }
