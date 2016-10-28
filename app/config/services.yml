@@ -23,6 +23,10 @@ services:
     class: AppBundle\Service\GameSetService
     arguments: ['@app.repository.gameset', '@doctrine.orm.entity_manager', '@security.token_storage']
 
+  app.service.move_type:
+    class: AppBundle\Service\MoveTypeService
+    arguments: ['app.repository.move_type']
+
   app.repository:
     class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.entity_manager', getRepository]
