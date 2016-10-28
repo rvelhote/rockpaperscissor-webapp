@@ -25,7 +25,7 @@ services:
 
   app.service.move_type:
     class: AppBundle\Service\MoveTypeService
-    arguments: ['app.repository.move_type']
+    arguments: ['@app.repository.move_type']
 
   app.repository:
     class: Doctrine\ORM\EntityRepository
