@@ -67,6 +67,15 @@ class GameSetService
     }
 
     /**
+     * @param string $guid
+     * @return null|object
+     */
+    public function findGamesetByGuid(string $guid)
+    {
+        return $this->repository->findGamesetByGuid($guid);
+    }
+
+    /**
      * @return GameSet
      */
     public function findGameset() : GameSet

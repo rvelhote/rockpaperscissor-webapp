@@ -61,31 +61,11 @@ class GameService
     }
 
     /**
-     * @return array
+     * @param string $guid
+     * @return null|object
      */
-    public function getGame() : array
+    public function findGameByGuid(string $guid)
     {
-        $this->game = $this->repository->findOneBy(['datePlayed' => null]);
-//        $this->game->setLocked(true);
-
-//        $this->manager->persist($this->game);
-//        $this->manager->flush();
-
-        $moves = array_map(function ($move) {
-            /** @var MoveType $move */
-            return ['name' => $move->getName(), 'move' => $move->getSlug()];
-        }, $this->game->getGameType()->getMoveTypes()->toArray());
-
-        $game = [
-            'guid' => $this->game->getGuid(),
-            'opponent' => [
-                'handle' => $this->game->getPlayer2()->getUsername(),
-                'picture' => ''
-            ],
-            'moves' => $moves,
-            'gameType' => ['name' => $this->game->getGameType()->getName()]
-        ];
-
-        return $game;
+        return $this->repository->findByGuid($guid);
     }
 }

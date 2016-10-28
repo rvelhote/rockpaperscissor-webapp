@@ -36,6 +36,7 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -51,39 +52,38 @@ class GameplayController extends FOSRestController
      */
     public function playAction(Request $request)
     {
-        $playerSubmission = new MakeMoveForm();
-
         $options = ['csrf_protection' => false];
-        $playerSubmissionForm = $this->createFormBuilder($playerSubmission, $options)
+        $form = $this->createFormBuilder(new MakeMoveForm(), $options)
             ->add('gameset', TextType::class)
             ->add('game', TextType::class)
             ->add('move', TextType::class)
             ->getForm();
 
-        $playerSubmissionForm->handleRequest($request);
+        $form->handleRequest($request);
 
-        if (!$playerSubmissionForm->isValid()) {
-            var_dump($playerSubmissionForm->getErrors(true)->count());
-            foreach ($playerSubmissionForm->getErrors(true) as $e) {
-                var_dump($e->getMessage());
-            }
-            exit;
+        if (!$form->isValid()) {
+            $callback = function(FormError $error) {
+                return $error->getMessage();
+            };
+
+            $data = [
+                'errors' => array_map($callback, iterator_to_array($form->getErrors(true)))
+            ];
+
+            return $this->view($data, 403);
         }
 
         /** @var MakeMoveForm $playerSubmission */
-        $playerSubmission = $playerSubmissionForm->getData();
+        $playerSubmission = $form->getData();
 
         /** @var GameSet $gameset */
-        $criteria = ['guid' => $playerSubmission->getGameset()];
-        $gameset = $this->getDoctrine()->getRepository('AppBundle:GameSet')->findOneBy($criteria);
+        $gameset = $this->get('app.service.gameset')->findGamesetByGuid($playerSubmission->getGameset());
 
         /** @var Game $game */
-        $criteria = ['guid' => $playerSubmission->getGame()];
-        $game = $this->getDoctrine()->getRepository('AppBundle:Game')->findOneBy($criteria);
+        $game = $this->get('app.service.game')->findGameByGuid($playerSubmission->getGame());
 
         /** @var MoveType $move */
-        $criteria = ['slug' => $playerSubmission->getMove()];
-        $move = $this->getDoctrine()->getRepository('AppBundle:MoveType')->findOneBy($criteria);
+        $move = $this->get('app.service.move_type')->findMoveBySlug($playerSubmission->getMove());
 
         /** @var GameEngine $engine */
         $engine = $this->get('app.game_engine');

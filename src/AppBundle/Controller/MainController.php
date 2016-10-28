@@ -28,9 +28,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class MainController
+ * @package AppBundle\Controller
+ */
 class MainController extends Controller
 {
     /**
+     * This action will just display the markup required to initialize React.
      * @Method({"GET"})
      * @Route("/", name="homepage")
      */
