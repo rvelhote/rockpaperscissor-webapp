@@ -49,6 +49,9 @@ class GameplayController extends FOSRestController
     /**
      * @Post("/api/v1/play", name="play", options={ "method_prefix" = false })
      * @View(serializerGroups={"Default"})
+     *
+     * TODO Investigate 1: instantiate the $gameset, $game and $move by using form types
+     * TODO Investigate 2: instantiate the $gameset, $game and $move by passing the Request to the services
      */
     public function playAction(Request $request)
     {
@@ -80,15 +83,9 @@ class GameplayController extends FOSRestController
 
         /** @var GameEngine $engine */
         $engine = $this->get('app.game_engine');
-        $result = $engine->play($move->getSlug(), $game->getMovePlayer2()->getSlug(), $game->getGameType()->getRules());
+        $result = $engine->play($move, $game->getMovePlayer2(), $game->getGameType());
 
-        if ($result instanceof Tie) {
-            $game->setResult(0);
-        } else if ($result->getWinner()->getPlay() === $move->getSlug()) {
-            $game->setResult(1);
-        } else {
-            $game->setResult(2);
-        }
+        $game->setResult($result);
 
         // Update the game definition with the data of the player that played the game
         $game->setPlayer1($this->getUser());

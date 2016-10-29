@@ -24,15 +24,16 @@
  */
 namespace AppBundle\Service;
 
+use AppBundle\Entity\GameType;
+use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Result as ResultEntity;
 use Balwan\RockPaperScissor\Game\Game;
-use Balwan\RockPaperScissor\Game\Result\AbstractGameResult;
 use Balwan\RockPaperScissor\Game\Result\Tie;
+use Balwan\RockPaperScissor\Game\Result\Win;
 use Balwan\RockPaperScissor\Move\Move;
 use Balwan\RockPaperScissor\Player\Player;
 use Balwan\RockPaperScissor\Rule\Rule;
 use Balwan\RockPaperScissor\Rule\RuleCollection;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * Class GameEngine
@@ -41,26 +42,33 @@ use Doctrine\Common\Collections\Collection;
 class GameEngine
 {
     /**
-     * @param string $move1
-     * @param string $move2
-     * @param Collection $rules
-     * @return AbstractGameResult
+     * @param MoveType $move1
+     * @param MoveType $move2
+     * @param GameType $gameType
+     * @return int
      */
-    public function play(string $move1, string $move2, Collection $rules) : AbstractGameResult
+    public function play(MoveType $move1, MoveType $move2, GameType $gameType) : int
     {
         $ruleset = new RuleCollection();
 
         /** @var \AppBundle\Entity\Rule $r */
-        foreach ($rules as $r) {
+        foreach ($gameType->getRules() as $r) {
             $ruleset->add(new Rule($r->getWinner()->getName(), $r->getLoser()->getName(), $r->getOutcome()));
         }
 
-        $gameGame = new Game(new Move($move1), new Move($move2), $ruleset);
-        return $gameGame->result();
-    }
+        $gameGame = new Game(new Move($move1->getSlug()), new Move($move2->getSlug()), $ruleset);
 
-    public function make()
-    {
+        /** @var Win $result */
+        $result = $gameGame->result();
 
+        if($result instanceof Tie) {
+            return 0;
+        }
+
+        if($result->getWinner()->getPlay() === $move1->getSlug()) {
+            return 1;
+        }
+
+        return 2;
     }
 }
