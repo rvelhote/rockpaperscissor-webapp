@@ -52,13 +52,9 @@ class GameplayController extends FOSRestController
      */
     public function playAction(Request $request)
     {
-        $options = ['csrf_protection' => false];
-        $form = $this->createFormBuilder(new MakeMoveForm(), $options)
-            ->add('gameset', TextType::class)
-            ->add('game', TextType::class)
-            ->add('move', TextType::class)
-            ->getForm();
+        $parameters = new MakeMoveForm();
 
+        $form = $this->createForm(MakeMoveForm::class, $parameters);
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
@@ -73,17 +69,14 @@ class GameplayController extends FOSRestController
             return $this->view($data, 403);
         }
 
-        /** @var MakeMoveForm $playerSubmission */
-        $playerSubmission = $form->getData();
-
         /** @var GameSet $gameset */
-        $gameset = $this->get('app.service.gameset')->findGamesetByGuid($playerSubmission->getGameset());
+        $gameset = $this->get('app.service.gameset')->findGamesetByGuid($parameters->getGameset());
 
         /** @var Game $game */
-        $game = $this->get('app.service.game')->findGameByGuid($playerSubmission->getGame());
+        $game = $this->get('app.service.game')->findGameByGuid($parameters->getGame());
 
         /** @var MoveType $move */
-        $move = $this->get('app.service.move_type')->findMoveBySlug($playerSubmission->getMove());
+        $move = $this->get('app.service.move_type')->findMoveBySlug($parameters->getMove());
 
         /** @var GameEngine $engine */
         $engine = $this->get('app.game_engine');

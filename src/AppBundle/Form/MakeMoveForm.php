@@ -24,6 +24,10 @@
  */
 namespace AppBundle\Form;
 
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -31,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @package AppBundle\Form
  * @AppBundle\Validator\Constraints\FullGameplayConstraint()
  */
-class MakeMoveForm
+class MakeMoveForm extends AbstractType
 {
     /**
      * @Assert\NotBlank()
@@ -50,6 +54,27 @@ class MakeMoveForm
      * @var string
      */
     protected $move = '';
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->add('gameset', TextType::class);
+        $builder->add('game', TextType::class);
+        $builder->add('move', TextType::class);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'csrf_protection'   => false,
+        ]);
+    }
 
     /**
      * @return string

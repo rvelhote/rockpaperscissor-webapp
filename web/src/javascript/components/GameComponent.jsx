@@ -70,9 +70,9 @@ class GameComponent extends React.Component {
     onPlayClick(gamesetGuid, gameGuid, move) {
         // console.log(gamesetGuid, gameGuid, move);
         var data = new FormData();
-        data.append('form[move]', move);
-        data.append('form[game]', gameGuid);
-        data.append('form[gameset]', gamesetGuid);
+        data.append('make_move_form[move]', move);
+        data.append('make_move_form[game]', gameGuid);
+        data.append('make_move_form[gameset]', gamesetGuid);
 
         var headers = new Headers();
         headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
