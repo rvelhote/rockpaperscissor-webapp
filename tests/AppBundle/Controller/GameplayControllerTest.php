@@ -107,7 +107,7 @@ class GameplayControllerTest extends AuthenticatedWebTestCase
         $gameset = json_decode($this->client->getResponse()->getContent());
 
         $params = [
-            'form' => [
+            'make_move_form' => [
                 'move' => 'rock',
                 'game' => $gameset->gameset->games[0]->guid,
                 'gameset' => $gameset->gameset->guid
