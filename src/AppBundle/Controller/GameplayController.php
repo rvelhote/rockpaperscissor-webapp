@@ -29,16 +29,13 @@ use AppBundle\Entity\GameSet;
 use AppBundle\Entity\MoveType;
 use AppBundle\Form\MakeMoveForm;
 use AppBundle\Service\GameEngine;
-use Balwan\RockPaperScissor\Game\Result\Tie;
 use DateTime;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\FOSRestController;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-
 
 /**
  * Class GameplayController

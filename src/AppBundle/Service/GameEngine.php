@@ -27,13 +27,13 @@ namespace AppBundle\Service;
 use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Result as ResultEntity;
-use Balwan\RockPaperScissor\Game\Game;
-use Balwan\RockPaperScissor\Game\Result\Tie;
-use Balwan\RockPaperScissor\Game\Result\Win;
-use Balwan\RockPaperScissor\Move\Move;
-use Balwan\RockPaperScissor\Player\Player;
-use Balwan\RockPaperScissor\Rule\Rule;
-use Balwan\RockPaperScissor\Rule\RuleCollection;
+use Welhott\RockPaperScissor\Game\Game;
+use Welhott\RockPaperScissor\Game\Result\Tie;
+use Welhott\RockPaperScissor\Game\Result\Win;
+use Welhott\RockPaperScissor\Move\Move;
+use Welhott\RockPaperScissor\Player\Player;
+use Welhott\RockPaperScissor\Rule\Rule;
+use Welhott\RockPaperScissor\Rule\RuleCollection;
 
 /**
  * Class GameEngine

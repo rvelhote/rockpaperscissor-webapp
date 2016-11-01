@@ -49,7 +49,8 @@ class StatsService
 
     /**
      * StatsService constructor.
-     * @param GameSetRepository $resultRepository Doctrine repository object to access the 'result' table.
+     * @param GameRepository $repository
+     * @param TokenStorage $token
      */
     public function __construct(GameRepository $repository, TokenStorage $token)
     {
