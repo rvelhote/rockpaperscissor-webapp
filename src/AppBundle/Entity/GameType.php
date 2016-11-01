@@ -55,7 +55,7 @@ class GameType
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="MoveType", inversedBy="gameTypes")
+     * @ORM\ManyToMany(targetEntity="MoveType", inversedBy="gameTypes", cascade={"persist"})
      * @Expose
      *
      */
