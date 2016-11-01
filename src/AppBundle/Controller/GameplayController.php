@@ -85,20 +85,8 @@ class GameplayController extends FOSRestController
         $engine = $this->get('app.game_engine');
         $result = $engine->play($move, $game->getMovePlayer2(), $game->getGameType());
 
-        $game->setResult($result);
-
-        // Update the game definition with the data of the player that played the game
-        $game->setPlayer1($this->getUser());
-        $game->setMovePlayer1($move);
-        $game->setDatePlayed(new DateTime());
-
-        $this->getDoctrine()->getManager()->persist($game);
-        $this->getDoctrine()->getManager()->flush();
-
-
-        $gameset->setLastActivity(new DateTime());
-        $this->getDoctrine()->getManager()->persist($gameset);
-        $this->getDoctrine()->getManager()->flush();
+        $this->get('app.service.game')->updateGame($game, $this->getUser(), $move, $result, new DateTime());
+        $gameset = $this->get('app.service.gameset')->updateLastPlayed($gameset, new DateTime());
 
         return [
             'user' => $this->getUser(),

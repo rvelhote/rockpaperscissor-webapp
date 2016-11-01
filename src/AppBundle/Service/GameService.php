@@ -26,7 +26,9 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Game;
 use AppBundle\Entity\MoveType;
+use AppBundle\Entity\Player;
 use AppBundle\Repository\GameRepository;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -67,5 +69,27 @@ class GameService
     public function findGameByGuid(string $guid)
     {
         return $this->repository->findByGuid($guid);
+    }
+
+    /**
+     * @param Game $game
+     * @param Player $player
+     * @param MoveType $move
+     * @param int $result
+     * @param DateTime $date
+     * @return Game
+     */
+    public function updateGame(Game $game, Player $player, MoveType $move, int $result, DateTime $date)
+    {
+        $game->setResult($result);
+
+        $game->setPlayer1($player);
+        $game->setMovePlayer1($move);
+        $game->setDatePlayed(new DateTime());
+
+        $this->manager->persist($game);
+        $this->manager->flush();
+
+        return $game;
     }
 }

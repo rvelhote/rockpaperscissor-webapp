@@ -102,4 +102,22 @@ class GameSetService
 
         return $gameset;
     }
+
+    /**
+     * Updates a gameset's lastPlayed parameter to a certain date.
+     *
+     * @param GameSet $gameset The gameset we want to update.
+     * @param DateTime $date The date that we want to set the lastPlayed attribute to.
+     *
+     * @return GameSet The changed gameset with updated parameters.
+     */
+    public function updateLastPlayed(GameSet $gameset, DateTime $date)
+    {
+        $gameset->setLastActivity($date);
+
+        $this->manager->persist($gameset);
+        $this->manager->flush();
+
+        return $gameset;
+    }
 }
