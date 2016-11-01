@@ -141,7 +141,7 @@ class FullGameplayConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if(!is_null($game) && !$game->getGameType()->getMoveTypes()->contains($move)) {
+        if(!is_null($game) && !is_null($move) && !$game->getGameType()->getMoveTypes()->contains($move)) {
             $this->context
                 ->buildViolation($constraint->wrongMove)
                 ->setParameter(':move', $form->getMove())
