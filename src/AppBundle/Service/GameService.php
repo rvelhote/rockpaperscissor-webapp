@@ -85,7 +85,7 @@ class GameService
 
         $game->setPlayer1($player);
         $game->setMovePlayer1($move);
-        $game->setDatePlayed(new DateTime());
+        $game->setDatePlayed($date);
 
         $this->manager->persist($game);
         $this->manager->flush();
