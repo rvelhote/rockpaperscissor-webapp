@@ -119,4 +119,41 @@ class GameplayControllerTest extends AuthenticatedWebTestCase
         $this->client->request(Request::METHOD_POST, $url, $params, [], ['HTTP_ACCEPT' => 'application/json']);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
+
+    /**
+     * @test Play a game with an invalid move that does not belong to any game type.
+     */
+    public function testPlayActionWithInvalidMove()
+    {
+        $move = 'spock';
+
+        $url = $this->client->getContainer()->get('router')->generate('game');
+        $this->client->request(Request::METHOD_GET, $url, [], [], ['HTTP_ACCEPT' => 'application/json']);
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $gameset = json_decode($this->client->getResponse()->getContent());
+
+        $params = [
+            'make_move_form' => [
+                'move' => $move,
+                'game' => $gameset->gameset->games[0]->guid,
+                'gameset' => $gameset->gameset->guid
+            ]
+        ];
+
+        $url = $this->client->getContainer()->get('router')->generate('play');
+
+        $this->client->request(Request::METHOD_POST, $url, $params, [], ['HTTP_ACCEPT' => 'application/json']);
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+
+        $response = $this->client->getResponse()->getContent();
+
+        $decoder = new JsonDecode();
+        $decoded = $decoder->decode($response, JsonEncoder::FORMAT, ['json_decode_associative' => true]);
+
+        $this->assertArrayHasKey('errors', $decoded);
+        $this->assertCount(1, $decoded['errors']);
+
+        $this->assertEquals('The move "'.$move.'" does not exist.', $decoded['errors'][0]);
+    }
 }
