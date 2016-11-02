@@ -61,14 +61,6 @@ class StatsService
     /**
      *
      */
-    public function getGamesetStats()
-    {
-//        $query = $this->repository->createQueryBuilder('gameset');
-    }
-
-    /**
-     *
-     */
     public function getGameWins()
     {
         $query = $this->repository->createQueryBuilder('g');
