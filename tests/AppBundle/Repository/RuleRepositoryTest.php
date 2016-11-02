@@ -71,7 +71,7 @@ class RuleRepositoryTest extends KernelTestCase
      * @test Make sure all the Rock Paper Scissors rules are correct in the database
      * @dataProvider getExpectedRules
      */
-    public function testRulesProperties($expected)
+    public function testGetRulesProperties($expected)
     {
         $rules = $this->repository->findAll();
 
