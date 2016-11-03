@@ -63,7 +63,7 @@ class MoveType
     private $slug;
 
     /**
-     * @ORM\ManyToMany(targetEntity="GameType", mappedBy="moveTypes")
+     * @ORM\ManyToMany(targetEntity="GameType", mappedBy="moveTypes", cascade={"persist"})
      */
     private $gameTypes;
    
