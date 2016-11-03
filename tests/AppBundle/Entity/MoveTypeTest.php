@@ -24,27 +24,16 @@
  */
 namespace Tests\AppBundle\Entity;
 
-use AppBundle\DataFixtures\ORM\LoadGameTypeData;
-use AppBundle\DataFixtures\ORM\LoadMoveData;
-use AppBundle\DataFixtures\ORM\LoadRulesData;
 use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
-use AppBundle\Entity\Rule;
 use AppBundle\Repository\RuleRepository;
-use AppKernel;
-use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\DataFixtures\Loader;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\SchemaTool;
-use FOS\RestBundle\Controller\Annotations\Move;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\AppBundle\WithFixturesTestCase;
 
 /**
  * Class RuleTest
  * @package Tests\AppBundle\Entity
  */
-class MoveTypeTest extends KernelTestCase
+class MoveTypeTest extends WithFixturesTestCase
 {
     /**
      * @var RuleRepository
@@ -52,32 +41,12 @@ class MoveTypeTest extends KernelTestCase
     protected $repository;
 
     /**
-     * @var EntityManager
-     */
-    protected $manager;
-
-    /**
      *
      */
     public function setUp()
     {
-        self::bootKernel();
-
-        $this->manager = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        parent::setUp();
         $this->repository = $this->manager->getRepository('AppBundle:MoveType');
-
-        $metadatas = $this->manager->getMetadataFactory()->getAllMetadata();
-        $schemaTool = new SchemaTool($this->manager);
-        $schemaTool->updateSchema($metadatas);
-
-        $loader = new Loader;
-        $loader->addFixture(new LoadMoveData());
-        $loader->addFixture(new LoadGameTypeData());
-        $loader->addFixture(new LoadRulesData());
-
-        $purger = new ORMPurger($this->manager);
-        $executor = new ORMExecutor($this->manager, $purger);
-        $executor->execute($loader->getFixtures());
     }
 
     /**
@@ -85,16 +54,70 @@ class MoveTypeTest extends KernelTestCase
      */
     public function testInsertAndRetrieve($expected)
     {
-        /** @var MoveType $moveTypeFromDB */
-        $moveTypeFromDB = $this->repository->find($expected[0]);
-        $this->assertNotNull($moveTypeFromDB);
+        /** @var MoveType $move */
+        $move = $this->repository->find($expected[0]);
+        $this->assertNotNull($move);
 
-        $this->assertEquals($expected[0], $moveTypeFromDB->getId());
-        $this->assertEquals($expected[1], $moveTypeFromDB->getName());
-        $this->assertEquals($expected[2], $moveTypeFromDB->getSlug());
-        $this->assertEquals($expected[3], $moveTypeFromDB->getGameTypes()->count());
+        $this->assertEquals($expected[0], $move->getId());
+        $this->assertEquals($expected[1], $move->getName());
+        $this->assertEquals($expected[2], $move->getSlug());
+        $this->assertEquals($expected[3], $move->getGameTypes()->count());
+
+        $gameTypes = $this->manager->getRepository('AppBundle:GameType')->findAll();
+        $this->assertEquals($gameTypes, $move->getGameTypes()->toArray());
     }
 
+    /**
+     * @dataProvider getMoveType
+     */
+    public function testRemoveGameType($expected)
+    {
+        /** @var MoveType $move */
+        $move = $this->repository->find($expected[0]);
+        $this->assertNotNull($move);
+
+        $moveGameTypes = $move->getGameTypes();
+        $totalMoveGameTypes = $move->getGameTypes()->count();
+
+        /** @var GameType $moveGameType */
+        foreach($moveGameTypes as $moveGameType) {
+            $this->assertTrue($move->getGameTypes()->contains($moveGameType));
+            $move->removeGameType($moveGameType);
+
+            $this->manager->persist($move);
+            $this->manager->flush();
+
+            $move = $this->repository->find($expected[0]);
+
+            $this->assertEquals(--$totalMoveGameTypes, $move->getGameTypes()->count());
+            $this->assertFalse($move->getGameTypes()->contains($moveGameType));
+        }
+    }
+
+    /**
+     *
+     */
+    public function testAddGameType()
+    {
+        $gameType = new GameType();
+        $gameType->setName('Test New Game Type');
+
+        $moveType = new MoveType();
+        $moveType->setName('Test New Move');
+        $moveType->setSlug(mb_strtolower($moveType->getName()));
+        $moveType->addGameType($gameType);
+
+        $this->manager->persist($moveType);
+        $this->manager->flush();
+
+        /** @var MoveType $moveTypeFromDb */
+        $moveTypeFromDb = $this->repository->findOneBy(['slug' => $moveType->getSlug()]);
+        $this->assertNotNull($moveTypeFromDb);
+    }
+
+    /**
+     * @return array
+     */
     public function getMoveType()
     {
         return [
