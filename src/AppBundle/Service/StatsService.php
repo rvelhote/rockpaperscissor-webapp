@@ -26,7 +26,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Player;
 use AppBundle\Repository\GameRepository;
-use AppBundle\Repository\GameSetRepository;
 use Doctrine\DBAL\Types\IntegerType;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 

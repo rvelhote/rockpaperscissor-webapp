@@ -31,7 +31,6 @@ use AppBundle\Repository\GameSetRepository;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\User\User;
 
 /**
  * Class GameSetService

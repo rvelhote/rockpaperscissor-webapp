@@ -27,10 +27,8 @@ namespace AppBundle\Command;
 use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Rule;
-use AppBundle\Repository\MoveTypeRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

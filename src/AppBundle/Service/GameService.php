@@ -48,11 +48,6 @@ class GameService
     private $manager;
 
     /**
-     * @var Game
-     */
-    private $game;
-
-    /**
      * GameService constructor.
      * @param GameRepository $repository
      */
