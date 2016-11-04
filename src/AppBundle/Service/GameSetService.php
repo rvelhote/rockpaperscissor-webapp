@@ -57,6 +57,7 @@ class GameSetService
      * GameSetService constructor.
      * @param GameSetRepository $repository
      * @param EntityManager $manager
+     * @param TokenStorage $token
      */
     public function __construct(GameSetRepository $repository, EntityManager $manager, TokenStorage $token)
     {

@@ -50,6 +50,7 @@ class GameService
     /**
      * GameService constructor.
      * @param GameRepository $repository
+     * @param EntityManager $manager
      */
     public function __construct(GameRepository $repository, EntityManager $manager)
     {

@@ -47,6 +47,9 @@ class GameplayController extends FOSRestController
      * @Post("/api/v1/play", name="play", options={ "method_prefix" = false })
      * @View(serializerGroups={"Default"})
      *
+     * @param Request $request
+     * @return array|\FOS\RestBundle\View\View
+     *
      * TODO Investigate 1: instantiate the $gameset, $game and $move by using form types
      * TODO Investigate 2: instantiate the $gameset, $game and $move by passing the Request to the services
      */
