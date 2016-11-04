@@ -2,6 +2,7 @@
     "name": "welhott/rockpaperscissors",
     "license": "MIT",
     "type": "project",
+    "description": "An application that allows you to play Rock Paper Scissors against other people.",
     "autoload": {
         "psr-4": {
             "": "src/"
