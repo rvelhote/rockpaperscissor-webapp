@@ -26,12 +26,10 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
-use AppBundle\Entity\Result as ResultEntity;
 use Welhott\RockPaperScissor\Game\Game;
 use Welhott\RockPaperScissor\Game\Result\Tie;
 use Welhott\RockPaperScissor\Game\Result\Win;
 use Welhott\RockPaperScissor\Move\Move;
-use Welhott\RockPaperScissor\Player\Player;
 use Welhott\RockPaperScissor\Rule\Rule;
 use Welhott\RockPaperScissor\Rule\RuleCollection;
 
