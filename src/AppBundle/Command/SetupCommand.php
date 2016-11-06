@@ -30,7 +30,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class GeneratePlayersCommand
+ * Class SetupCommand
  * @package AppBundle\Command
  */
 class SetupCommand extends ContainerAwareCommand
@@ -64,13 +64,7 @@ class SetupCommand extends ContainerAwareCommand
         $updateCommand = $this->getApplication()->find('doctrine:schema:update');
         $updateCommand->run(new ArrayInput(['--force' => true]), $output);
 
-        $generateGameTypeCommand = $this->getApplication()->find('rps:generate-game-type');
-        $generateGameTypeCommand->run($input, $output);
-
-        $generatePlayersCommand = $this->getApplication()->find('rps:generate-players');
-        $generatePlayersCommand->run($input, $output);
-
-        $generateGamesCommand = $this->getApplication()->find('rps:generate-games');
-        $generateGamesCommand->run($input, $output);
+        $fixturesCommand = $this->getApplication()->find('doctrine:fixtures:load');
+        $fixturesCommand->run($input, $output);
     }
 }
