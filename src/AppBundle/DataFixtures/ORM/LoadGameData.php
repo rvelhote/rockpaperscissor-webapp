@@ -68,7 +68,7 @@ class LoadGameData extends AbstractFixture implements OrderedFixtureInterface, C
         /** @var GameType[] $gameTypes */
         $gameTypes = $this->manager->getRepository('AppBundle:GameType')->findAll();
 
-        for ($i = 0; $i < 33; $i++) {
+        for ($i = 0; $i < 9; $i++) {
             $gameset = new GameSet();
             $gameset->setGuid(Uuid::uuid4()->toString());
 
@@ -96,7 +96,7 @@ class LoadGameData extends AbstractFixture implements OrderedFixtureInterface, C
      */
     public function getOrder()
     {
-        return 2;
+        return 5;
     }
 
     /**

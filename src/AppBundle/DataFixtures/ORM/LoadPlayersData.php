@@ -48,16 +48,24 @@ class LoadPlayersData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        for ($i = 0; $i < 20; $i++) {
+        $encoder = $this->container->get('security.password_encoder');
+
+        $mainPlayer = new Player();
+        $mainPlayer->setUsername('@rvelhote');
+        $mainPlayer->setIsActive(true);
+        $mainPlayer->setPassword($encoder->encodePassword($mainPlayer, 'x'));
+
+        $manager->persist($mainPlayer);
+        $manager->flush();
+
+        for ($i = 0; $i < 5; $i++) {
             $player = new Player();
             $player->setUsername('@abardadyn <'.$i.'>');
             $player->setIsActive(true);
-            $player->setPassword('x');
+            $player->setPassword('--');
 
             $manager->persist($player);
             $manager->flush();
-
-            $this->addReference(sprintf('player-%d', $player->getId()), $player);
         }
     }
 
@@ -68,7 +76,7 @@ class LoadPlayersData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function getOrder()
     {
-        return 2;
+        return 4;
     }
 
     /**
