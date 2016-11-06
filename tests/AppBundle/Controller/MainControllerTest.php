@@ -25,6 +25,7 @@
 namespace Tests\AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Tests\AppBundle\WithFixturesWebTestCase;
 
 /**
  * Class MainControllerTest

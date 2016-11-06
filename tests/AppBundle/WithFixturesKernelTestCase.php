@@ -24,8 +24,10 @@
  */
 namespace Tests\AppBundle;
 
+use AppBundle\DataFixtures\ORM\LoadGameData;
 use AppBundle\DataFixtures\ORM\LoadGameTypeData;
 use AppBundle\DataFixtures\ORM\LoadMoveData;
+use AppBundle\DataFixtures\ORM\LoadPlayersData;
 use AppBundle\DataFixtures\ORM\LoadRulesData;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
@@ -38,7 +40,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  * Class WithFixturesTestCase
  * @package Tests\AppBundle
  */
-class WithFixturesTestCase extends KernelTestCase
+class WithFixturesKernelTestCase extends KernelTestCase
 {
     /**
      * @var EntityManager
@@ -68,19 +70,23 @@ class WithFixturesTestCase extends KernelTestCase
         $schemaTool = new SchemaTool($this->manager);
         $schemaTool->updateSchema($metadatas);
 
-        $loader = new Loader;
+        $loader = new Loader();
         $loader->addFixture(new LoadMoveData());
         $loader->addFixture(new LoadGameTypeData());
         $loader->addFixture(new LoadRulesData());
 
+        $playerFixture = new LoadPlayersData();
+        $playerFixture->setContainer(static::$kernel->getContainer());
+        $loader->addFixture($playerFixture);
+
+        $gameFixture = new LoadGameData();
+        $gameFixture->setContainer(static::$kernel->getContainer());
+        $loader->addFixture($gameFixture);
+
         $this->purger = new ORMPurger($this->manager);
         $this->executor = new ORMExecutor($this->manager, $this->purger);
         $this->executor->execute($loader->getFixtures());
-    }
 
-    public function tearDown()
-    {
-        $this->purger->purge();
-        parent::tearDown();
+        parent::setUp();
     }
 }

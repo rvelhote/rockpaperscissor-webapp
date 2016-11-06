@@ -31,12 +31,13 @@ use AppBundle\Repository\RuleRepository;
 use AppKernel;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\AppBundle\WithFixturesKernelTestCase;
 
 /**
  * Class RuleTest
  * @package Tests\AppBundle\Entity
  */
-class RuleRepositoryTest extends KernelTestCase
+class RuleRepositoryTest extends WithFixturesKernelTestCase
 {
     /**
      * @var RuleRepository

@@ -26,13 +26,13 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Rule;
 use AppBundle\Repository\RuleRepository;
-use Tests\AppBundle\WithFixturesTestCase;
+use Tests\AppBundle\WithFixturesKernelTestCase;
 
 /**
  * Class RuleTest
  * @package Tests\AppBundle\Entity
  */
-class RuleTest extends WithFixturesTestCase
+class RuleKernelTest extends WithFixturesKernelTestCase
 {
     /**
      * @var RuleRepository

@@ -52,6 +52,7 @@ class AuthenticatedWebTestCase extends WebTestCase
             )
         );
 
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $data = json_decode($client->getResponse()->getContent(), true);
 
         $client = static::createClient();

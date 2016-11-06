@@ -28,13 +28,13 @@ use AppBundle\Entity\GameType;
 use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Rule;
 use AppBundle\Repository\GameTypeRepository;
-use Tests\AppBundle\WithFixturesTestCase;
+use Tests\AppBundle\WithFixturesKernelTestCase;
 
 /**
  * Class GameTypeTest
  * @package Tests\AppBundle\Entity
  */
-class GameTypeTest extends WithFixturesTestCase
+class GameTypeKernelTest extends WithFixturesKernelTestCase
 {
     /**
      * @var GameTypeRepository

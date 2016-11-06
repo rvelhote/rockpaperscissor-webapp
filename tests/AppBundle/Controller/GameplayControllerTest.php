@@ -28,13 +28,13 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Tests\AppBundle\AuthenticatedWebTestCase;
+use Tests\AppBundle\WithFixturesWebTestCase;
 
 /**
  * Class GameplayControllerTest
  * @package Tests\AppBundle\Controller
  */
-class GameplayControllerTest extends AuthenticatedWebTestCase
+class GameplayControllerTest extends WithFixturesWebTestCase
 {
     /**
      * @var Client
