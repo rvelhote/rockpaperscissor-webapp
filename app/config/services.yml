@@ -57,3 +57,9 @@ services:
     arguments: ['@app.repository.gameset', '@app.repository.game', '@app.repository.move_type', '@security.token_storage']
     tags:
       - { name: validator.constraint_validator }
+
+  validator.gameset_exists_constraint:
+    class: AppBundle\Validator\Constraints\GamesetExistsConstraint
+    arguments: ['@app.repository.gameset']
+    tags:
+      - { name: validator.constraint_validator }
