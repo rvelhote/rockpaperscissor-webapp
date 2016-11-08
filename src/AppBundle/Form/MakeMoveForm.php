@@ -29,28 +29,30 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use AppBundle\Validator\Constraints\FullGameplayConstraint;
 
 /**
  * Class MakeMoveForm
  * @package AppBundle\Form
- * @AppBundle\Validator\Constraints\FullGameplayConstraint()
  */
 class MakeMoveForm extends AbstractType
 {
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
+     * @AppBundle\Validator\Constraints\GamesetExistsConstraint
+     * @AppBundle\Validator\Constraints\GamesetOwnerConstraint
      * @var string
      */
     protected $gameset = '';
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      * @var string
      */
     protected $game = '';
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      * @var string
      */
     protected $move = '';

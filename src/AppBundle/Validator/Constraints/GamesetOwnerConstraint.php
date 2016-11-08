@@ -27,14 +27,14 @@ namespace AppBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class GamesetExistsConstraint
+ * Class GamesetOwnerConstraint
  * @package AppBundle\Validator\Constraints
  * @Annotation
  */
-class GamesetExistsConstraint extends Constraint
+class GamesetOwnerConstraint extends Constraint
 {
     /**
      * @var string
      */
-    public $message = 'The gameset :guid does not exist.';
+    public $message = 'The gameset :guid is valid but you are not its owner.';
 }

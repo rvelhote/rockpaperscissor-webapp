@@ -24,6 +24,7 @@
  */
 namespace Tests\AppBundle\Validator\Constraints;
 
+use AppBundle\Entity\GameSet;
 use AppBundle\Entity\MoveType;
 use AppBundle\Entity\Player;
 use AppBundle\Form\MakeMoveForm;
@@ -31,6 +32,8 @@ use AppBundle\Repository\GameSetRepository;
 use AppBundle\Repository\MoveTypeRepository;
 use AppBundle\Validator\Constraints\GamesetExistsConstraint;
 use AppBundle\Validator\Constraints\GamesetExistsConstraintValidator;
+use AppBundle\Validator\Constraints\GamesetOwnerConstraint;
+use AppBundle\Validator\Constraints\GamesetOwnerConstraintValidator;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use PHPUnit_Framework_MockObject_MockObject;
 use AppBundle\Entity\Game;
@@ -44,7 +47,7 @@ use Symfony\Component\Validator\Tests\Constraints\AbstractConstraintValidatorTes
  * Class FullGameplayConstraintValidatorTest
  * @package Tests\AppBundle\Validator\Constraints
  */
-class GamesetExistsConstraintValidatorTest extends AbstractConstraintValidatorTest
+class GamesetOwnerConstraintValidatorTest extends AbstractConstraintValidatorTest
 {
     /**
      * @var PHPUnit_Framework_MockObject_MockObject
@@ -52,43 +55,62 @@ class GamesetExistsConstraintValidatorTest extends AbstractConstraintValidatorTe
     private $repository;
 
     /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    private $player;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    private $gameset;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    private $owner;
+
+    private $guid = '86f3e31d-daab-4b13-acf1-8180a40763ba';
+
+    /**
      *
      */
-    public function testInvalidGamesetGuid()
+    public function testDoesNotBelong()
     {
-        $constraint = new GamesetExistsConstraint();
+        $constraint = new GamesetOwnerConstraint();
+        $this->owner->expects($this->once())->method('getId')->willReturn(2);
 
-        $guid = '86f3e31d-daab-4b13-acf1-8180a40763ba';
-        $gameset = null;
-
-        $this->repository->expects($this->once())->method('findGamesetByGuid')->willReturn($gameset);
-
-        $this->validator->validate($guid, $constraint);
-        $this->buildViolation($constraint->message)->setParameter(':guid', $guid)->assertRaised();
+        $this->validator->validate($this->guid, $constraint);
+        $this->buildViolation($constraint->message)->setParameter(':guid', $this->guid)->assertRaised();
     }
 
     /**
      *
      */
-    public function testValidGamesetGuid()
+    public function testBelongs()
     {
-        $constraint = new GamesetExistsConstraint();
+        $constraint = new GamesetOwnerConstraint();
+        $this->owner->expects($this->once())->method('getId')->willReturn(1);
 
-        $guid = '86f3e31d-daab-4b13-acf1-8180a40763ba';
-        $gameset = $this->getMockBuilder(GameSetRepository::class)->disableOriginalConstructor()->getMock();
-
-        $this->repository->expects($this->once())->method('findGamesetByGuid')->willReturn($gameset);
-
-        $this->validator->validate($guid, $constraint);
+        $this->validator->validate($this->guid, $constraint);
         $this->assertNoViolation();
     }
 
     /**
-     * @return GamesetExistsConstraintValidator
+     * @return GamesetOwnerConstraintValidator
      */
-    protected function createValidator()
+    protected function createValidator() : GamesetOwnerConstraintValidator
     {
+        $this->owner = $this->getMockBuilder(Player::class)->disableOriginalConstructor()->getMock();
+
+        $this->gameset = $this->getMockBuilder(GameSet::class)->disableOriginalConstructor()->getMock();
+        $this->gameset->expects($this->once())->method('getOwner')->willReturn($this->owner);
+
         $this->repository = $this->getMockBuilder(GameSetRepository::class)->disableOriginalConstructor()->getMock();
-        return new GamesetExistsConstraintValidator($this->repository);
+        $this->repository->expects($this->once())->method('findGamesetByGuid')->willReturn($this->gameset);
+
+        $this->player = $this->getMockBuilder(Player::class)->disableOriginalConstructor()->getMock();
+        $this->player->expects($this->once())->method('getId')->willReturn(1);
+
+        return new GamesetOwnerConstraintValidator($this->repository, $this->player);
     }
 }

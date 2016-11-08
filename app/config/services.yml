@@ -7,10 +7,6 @@ services:
   app.game_engine:
     class: AppBundle\Service\GameEngine
 
-  app.service.player:
-    class: AppBundle\Service\PlayerService
-    arguments: ['@app.repository.player', '@app.service.stats', '@session']
-
   app.service.stats:
     class: AppBundle\Service\StatsService
     arguments: ['@app.repository.game', '@security.token_storage']
@@ -52,14 +48,20 @@ services:
     parent: app.repository
     arguments: ['AppBundle:Result']
 
-  validator.full_gameplay_constraint:
-    class: AppBundle\Validator\Constraints\FullGameplayConstraintValidator
-    arguments: ['@app.repository.gameset', '@app.repository.game', '@app.repository.move_type', '@security.token_storage']
+#  validator.full_gameplay_constraint:
+#    class: AppBundle\Validator\Constraints\FullGameplayConstraintValidator
+#    arguments: ['@app.repository.gameset', '@app.repository.game', '@app.repository.move_type', '@security.token_storage']
+#    tags:
+#      - { name: validator.constraint_validator }
+
+  validator.gameset_exists_constraint:
+    class: AppBundle\Validator\Constraints\GamesetExistsConstraintValidator
+    arguments: ['@app.repository.gameset']
     tags:
       - { name: validator.constraint_validator }
 
-  validator.gameset_exists_constraint:
-    class: AppBundle\Validator\Constraints\GamesetExistsConstraint
-    arguments: ['@app.repository.gameset']
+  validator.gameset_owner_constraint:
+    class: AppBundle\Validator\Constraints\GamesetOwnerConstraintValidator
+    arguments: ['@app.repository.gameset', '@=service("security.token_storage").getToken().getUser()']
     tags:
       - { name: validator.constraint_validator }
