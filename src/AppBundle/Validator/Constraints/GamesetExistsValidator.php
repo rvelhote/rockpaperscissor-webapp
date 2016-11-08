@@ -33,7 +33,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  * Class GamesetExistsConstraint
  * @package AppBundle\Validator\Constraints
  */
-class GamesetExistsConstraintValidator extends ConstraintValidator
+class GamesetExistsValidator extends ConstraintValidator
 {
     /**
      * @var GameSetRepository

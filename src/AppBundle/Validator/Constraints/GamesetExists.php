@@ -24,52 +24,17 @@
  */
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Entity\GameSet;
-use AppBundle\Entity\Player;
-use AppBundle\Repository\GameSetRepository;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * Class GamesetOwnerConstraintValidator
+ * Class GamesetExistsConstraint
  * @package AppBundle\Validator\Constraints
+ * @Annotation
  */
-class GamesetOwnerConstraintValidator extends ConstraintValidator
+class GamesetExists extends Constraint
 {
     /**
-     * @var GameSetRepository
+     * @var string
      */
-    private $repository;
-
-    /**
-     * @var Player
-     */
-    private $player;
-
-    /**
-     * GamesetOwnerConstraintValidator constructor.
-     * @param GameSetRepository $repository
-     * @param Player $player
-     */
-    public function __construct(GameSetRepository $repository, Player $player)
-    {
-        $this->repository = $repository;
-        $this->player = $player;
-    }
-
-    /**
-     * Checks if the passed value is valid.
-     *
-     * @param mixed $value The value that should be validated
-     * @param Constraint $constraint The constraint for the validation
-     */
-    public function validate($value, Constraint $constraint)
-    {
-        /** @var GameSet $gameset */
-        $gameset = $this->repository->findGamesetByGuid($value);
-
-        if(!is_null($gameset) && $gameset->getOwner()->getId() != $this->player->getId()) {
-            $this->context->buildViolation($constraint->message)->setParameter(':guid', $value)->addViolation();
-        }
-    }
+    public $message = 'The gameset :guid does not exist.';
 }

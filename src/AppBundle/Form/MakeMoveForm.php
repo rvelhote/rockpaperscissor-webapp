@@ -29,7 +29,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use AppBundle\Validator\Constraints\FullGameplayConstraint;
 
 /**
  * Class MakeMoveForm
@@ -39,8 +38,8 @@ class MakeMoveForm extends AbstractType
 {
     /**
      * @Assert\NotBlank
-     * @AppBundle\Validator\Constraints\GamesetExistsConstraint
-     * @AppBundle\Validator\Constraints\GamesetOwnerConstraint
+     * @AppBundle\Validator\Constraints\GamesetExists
+     * @AppBundle\Validator\Constraints\GamesetOwner
      * @var string
      */
     protected $gameset = '';

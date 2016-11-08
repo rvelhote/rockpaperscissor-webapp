@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraint;
  * @package AppBundle\Validator\Constraints
  * @Annotation
  */
-class GamesetOwnerConstraint extends Constraint
+class GamesetOwner extends Constraint
 {
     /**
      * @var string
