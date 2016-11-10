@@ -192,7 +192,7 @@ class GameplayControllerTest extends WithFixturesWebTestCase
         $this->assertArrayHasKey('errors', $decoded);
         $this->assertCount(1, $decoded['errors']);
 
-        $this->assertEquals('The gameset ('.$dummyGamesetGuid.') does not exist.', $decoded['errors'][0]);
+        $this->assertEquals('The gameset '.$dummyGamesetGuid.' does not exist.', $decoded['errors'][0]);
     }
 
 
