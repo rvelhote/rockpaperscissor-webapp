@@ -65,3 +65,9 @@ services:
     arguments: ['@app.repository.game']
     tags:
       - { name: validator.constraint_validator }
+
+  validator.move_exists_constraint:
+    class: AppBundle\Validator\Constraints\MoveExistsValidator
+    arguments: ['@app.repository.move_type']
+    tags:
+      - { name: validator.constraint_validator }

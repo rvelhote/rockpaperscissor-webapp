@@ -53,6 +53,7 @@ class MakeMoveForm extends AbstractType
 
     /**
      * @Assert\NotBlank
+     * @AppBundle\Validator\Constraints\MoveExists
      * @var string
      */
     protected $move = '';

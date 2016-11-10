@@ -154,7 +154,7 @@ class GameplayControllerTest extends WithFixturesWebTestCase
         $this->assertArrayHasKey('errors', $decoded);
         $this->assertCount(1, $decoded['errors']);
 
-        $this->assertEquals('The move "'.$move.'" does not exist.', $decoded['errors'][0]);
+        $this->assertEquals('The move '.$move.' does not exist.', $decoded['errors'][0]);
     }
 
     /**
