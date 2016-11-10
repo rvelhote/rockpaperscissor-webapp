@@ -48,12 +48,6 @@ services:
     parent: app.repository
     arguments: ['AppBundle:Result']
 
-#  validator.full_gameplay_constraint:
-#    class: AppBundle\Validator\Constraints\FullGameplayConstraintValidator
-#    arguments: ['@app.repository.gameset', '@app.repository.game', '@app.repository.move_type', '@security.token_storage']
-#    tags:
-#      - { name: validator.constraint_validator }
-
   validator.gameset_exists_constraint:
     class: AppBundle\Validator\Constraints\GamesetExistsValidator
     arguments: ['@app.repository.gameset']
@@ -63,5 +57,11 @@ services:
   validator.gameset_owner_constraint:
     class: AppBundle\Validator\Constraints\GamesetOwnerValidator
     arguments: ['@app.repository.gameset', '@=service("security.token_storage").getToken().getUser()']
+    tags:
+      - { name: validator.constraint_validator }
+
+  validator.game_exists_constraint:
+    class: AppBundle\Validator\Constraints\GameExistsValidator
+    arguments: ['@app.repository.game']
     tags:
       - { name: validator.constraint_validator }

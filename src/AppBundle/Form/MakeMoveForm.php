@@ -46,6 +46,7 @@ class MakeMoveForm extends AbstractType
 
     /**
      * @Assert\NotBlank
+     * @AppBundle\Validator\Constraints\GameExists
      * @var string
      */
     protected $game = '';
