@@ -25,9 +25,7 @@ import React from 'react';
 import GameComponent from './GameComponent';
 
 const AppComponent = () => (
-  <main>
-    <GameComponent />
-  </main>
+  <GameComponent />
 );
 
 export default AppComponent;

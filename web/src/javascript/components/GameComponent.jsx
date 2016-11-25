@@ -25,8 +25,8 @@
 
 import React from 'react';
 import Player from './PlayerComponent';
-import Move from './MoveComponent';
 import Stats from './StatsComponent';
+import SingleGame from './SingleGameComponent';
 
 class GameComponent extends React.Component {
     constructor(props) {
@@ -142,55 +142,31 @@ class GameComponent extends React.Component {
             working = 'working'
         }
 
-
         return (
-            <section>
-                <button onClick={this.login}>Login</button>
-                <button onClick={this.logout}>Logout</button>
+        <div className="row expanded">
+            <header className="small-12 columns main">
+                <div className="row collapse expanded">
+                    <div className="columns">
+                        <Player player={this.state.player} />
+                    </div>
 
-                <hr />
-
-                __ {working} __
-
-                <hr />
-
-                <div>
-                    <Stats win={this.state.stats.wins} lose={this.state.stats.losses} draw={this.state.stats.draws}/>
+                    <div className="columns">
+                        <button className="button button__login" onClick={this.login}>Login</button>
+                        <button className="button button__logout" onClick={this.logout}>Logout</button>
+                    </div>
                 </div>
+            </header>
+
+            <section className="small-12">
+
                 <div>
                     <div>
-                        <Player player={this.state.player} />
 
-                        <div>GAMESET: <strong>{this.state.gameset.guid}</strong></div>
-                        <div>LastActivity: {this.state.gameset.last_activity}</div>
-                        <br/><br/><br/>
 
                         {
-                            this.state.gameset.games.map((g) =>
-                                <div key={g.guid}>
-                                    <div>GameGUID: {g.guid}</div>
+                            this.state.gameset.games.map(g => <SingleGame key={g.guid} gameset={this.state.gameset} game={g} />)
 
 
-                                        <div>GameName: {g.game_type.name}</div>
-                                        <div>Player2 Name: {g.player2.username}</div>
-                                        <div>Date: {g.date_played}</div>
-                                        <div>Result: {g.result}</div>
-
-                                    {
-                                        g.game_type.move_types.map((m) => {
-                                            return <Move key={m.slug}
-                                                         disabled={this.state.working}
-                                                         gameset={this.state.gameset.guid}
-                                                         game={g.guid}
-                                                         name={m.slug}
-                                                         onPlayClick={this.onPlayClick.bind(this)} />
-                                        })
-                                    }
-
-
-
-                                </div>
-                            )
                         }
                     </div>
 
@@ -202,6 +178,8 @@ class GameComponent extends React.Component {
                         <Player player={this.state.game.opponent} />
                     </div>
                 </div>
+
+
                 <div>
                     <div>
                         <ul>
@@ -214,6 +192,13 @@ class GameComponent extends React.Component {
                     </div>
                 </div>
             </section>
+
+            <footer className="small-12 columns">
+                <div className="columns">
+                    <Stats win={this.state.stats.wins} lose={this.state.stats.losses} draw={this.state.stats.draws}/>
+                </div>
+            </footer>
+        </div>
         );
     }
 }

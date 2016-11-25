@@ -24,7 +24,20 @@
 import React from 'react';
 
 const StatsComponent = props => (
-  <div className="stats">W: {props.win} L: {props.lose} D: {props.draw}<br /></div>
+  <ul className="stats">
+    <li className="stats__stat stats__stat__win">
+      <strong className="stats__stat__label">WINS:&nbsp;</strong>
+      <span className="stats__stat__value">{props.win}</span>
+    </li>
+    <li className="stats__stat stats__stat__loss">
+      <strong className="stats__stat__label">LOSSES:&nbsp;</strong>
+      <span className="stats__stat__value">{props.lose}</span>
+    </li>
+    <li className="stats__stat stats__stat__draw">
+      <strong className="stats__stat__label">DRAWS:&nbsp;  </strong>
+      <span className="stats__stat__value">{props.draw}</span>
+    </li>
+  </ul>
 );
 
 StatsComponent.displayName = 'StatsComponent';

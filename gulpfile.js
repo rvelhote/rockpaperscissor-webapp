@@ -25,7 +25,8 @@ const options = {
 
 const sassOptions = {
     outputStyle: 'compressed',
-    errLogToConsole: true
+    errLogToConsole: true,
+    includePaths: ['node_modules/foundation-sites/scss']
 };
 
 gulp.task('javascript:development', function() {

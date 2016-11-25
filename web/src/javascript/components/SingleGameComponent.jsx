@@ -21,26 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-// 'use strict';
-
 import React from 'react';
 
-const PlayerComponent = props => (
-  <div className="player">
-    <div className="player__name">{props.player.handle}</div>
-  </div>
+import Move from './MoveComponent';
+
+const SingleGameComponent = props => (
+  <article className="game">
+    <header className="game__header">
+      <h1 className="game__header game__game-type-name">{props.game.game_type.name}</h1>
+      <p className="game__header game__opponent">{props.game.player2.username}</p>
+    </header>
+    <main>
+      <div>Player2 Name: </div>
+      <div>Date: {props.game.date_played}</div>
+      <div>Result: {props.game.result}</div>
+
+      {
+        props.game.game_type.move_types.map((m) => {
+          return <Move key={m.slug}
+
+                       gameset={props.gameset.guid}
+                       game={props.game.guid}
+                       name={m.slug} />
+        })
+      }
+    </main>
+  </article>
 );
 
 
-PlayerComponent.displayName = 'PlayerComponent';
+SingleGameComponent.displayName = 'SingleGameComponent';
 
-PlayerComponent.propTypes = {
-  player: React.PropTypes.shape({
-    uuid: React.PropTypes.string,
-    handle: React.PropTypes.string
-  })
+SingleGameComponent.propTypes = {
+
 };
 
-PlayerComponent.defaultProps = {};
+SingleGameComponent.defaultProps = {};
 
-export default PlayerComponent;
+export default SingleGameComponent;

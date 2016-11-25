@@ -1,2 +1,82 @@
-html, button, textarea
-  font-family: 'Lato', sans-serif
+/**
+ * MIT License
+ *
+ * Copyright (c) 2016 Ricardo Velhote
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@import "foundation"
+
+@include foundation-global-styles
+@include foundation-flex-grid
+@include foundation-typography
+@include foundation-visibility-classes
+@include foundation-float-classes
+
+html
+  font-size: 62.5%
+
+body
+  font-size: 1.4rem
+  font-family: 'Roboto', sans-serif
+
+header.main
+  border-top: 0.3rem solid #272D4D
+
+button
+  &.button
+    border: 2px solid #272D4D
+    padding: 1rem 2rem
+    text-transform: uppercase
+    color: #fff
+    font-weight: 700
+    border-radius: 0.3rem
+
+    &.button__login
+      background-color: #83B8AA
+
+    &.button__logout
+      background-color: #B83564
+
+.stats
+  text-align: center
+  font-size: 2rem
+  margin: 0
+
+  .stats__stat
+    display: inline-block
+    padding: 1rem 2rem
+
+    .stats__stat__value
+      padding: 0 1rem
+      border-radius: 0.2rem
+      color: #fff
+      font-weight: 700
+
+    &.stats__stat__win
+      .stats__stat__value
+        background-color: #83B8AA
+
+    &.stats__stat__loss
+      .stats__stat__value
+        background-color: #FF6A5A
+
+    &.stats__stat__draw
+      .stats__stat__value
+        background-color: #FFB350
