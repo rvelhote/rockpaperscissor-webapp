@@ -25,7 +25,6 @@
 
 @include foundation-global-styles
 @include foundation-flex-grid
-@include foundation-typography
 @include foundation-visibility-classes
 @include foundation-float-classes
 
@@ -35,13 +34,13 @@ html
 body
   font-size: 1.4rem
   font-family: 'Roboto', sans-serif
+  color: #333
 
 header.main
-  border-top: 0.3rem solid #272D4D
+  border-top: 0.3rem solid #65727A
 
 button
   &.button
-    border: 2px solid #272D4D
     padding: 1rem 2rem
     text-transform: uppercase
     color: #fff
@@ -49,10 +48,10 @@ button
     border-radius: 0.3rem
 
     &.button__login
-      background-color: #83B8AA
+      background-color: #8F9A9C
 
     &.button__logout
-      background-color: #B83564
+      background-color: #BEC3BC
 
 .stats
   text-align: center
@@ -71,12 +70,27 @@ button
 
     &.stats__stat__win
       .stats__stat__value
-        background-color: #83B8AA
+        background-color: #E6E8E3
 
     &.stats__stat__loss
       .stats__stat__value
-        background-color: #FF6A5A
+        background-color: #BEC3BC
 
     &.stats__stat__draw
       .stats__stat__value
-        background-color: #FFB350
+        background-color: #E6E8E3
+
+.move-collection
+  list-style-type: none
+
+  .move-collection__move
+    display: inline-block
+
+    .move-collection__move__button
+      transition: background-color 500ms
+      background-color: transparent
+      padding: 1rem
+      border-radius: 0.5rem
+
+      &:hover
+        background-color: #E6E8E3

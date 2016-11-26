@@ -26,18 +26,14 @@
 import React from 'react';
 
 const PlayerComponent = props => (
-  <div className="player">
-    <div className="player__name">{props.player.handle}</div>
-  </div>
+  <span className="player__name">{props.player.username}</span>
 );
-
 
 PlayerComponent.displayName = 'PlayerComponent';
 
 PlayerComponent.propTypes = {
   player: React.PropTypes.shape({
-    uuid: React.PropTypes.string,
-    handle: React.PropTypes.string
+    username: React.PropTypes.string
   })
 };
 

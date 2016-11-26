@@ -158,28 +158,9 @@ class GameComponent extends React.Component {
             </header>
 
             <section className="small-12">
-
-                <div>
-                    <div>
-
-
-                        {
-                            this.state.gameset.games.map(g => <SingleGame key={g.guid} gameset={this.state.gameset} game={g} />)
-
-
-                        }
-                    </div>
-
-                    <div>
-                        <span>vs</span>
-                    </div>
-
-                    <div>
-                        <Player player={this.state.game.opponent} />
-                    </div>
-                </div>
-
-
+                <ul className="row expanded">
+                    { this.state.gameset.games.map(g => <SingleGame key={g.guid} onPlayClick={this.onPlayClick.bind(this)} gameset={this.state.gameset.guid} game={g} />) }
+                </ul>
                 <div>
                     <div>
                         <ul>

@@ -34,7 +34,7 @@ const StatsComponent = props => (
       <span className="stats__stat__value">{props.lose}</span>
     </li>
     <li className="stats__stat stats__stat__draw">
-      <strong className="stats__stat__label">DRAWS:&nbsp;  </strong>
+      <strong className="stats__stat__label">DRAWS:&nbsp;</strong>
       <span className="stats__stat__value">{props.draw}</span>
     </li>
   </ul>

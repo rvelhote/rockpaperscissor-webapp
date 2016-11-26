@@ -23,37 +23,39 @@
  */
 import React from 'react';
 
-import Move from './MoveComponent';
+import MoveCollection from './MoveCollectionComponent';
+import Stats from './StatsComponent';
+import Player from './PlayerComponent';
 
 const SingleGameComponent = props => (
-  <article className="game">
-    <header className="game__header">
-      <h1 className="game__header game__game-type-name">{props.game.game_type.name}</h1>
-      <p className="game__header game__opponent">{props.game.player2.username}</p>
-    </header>
-    <main>
-      <div>Player2 Name: </div>
-      <div>Date: {props.game.date_played}</div>
-      <div>Result: {props.game.result}</div>
+  <div className="columns">
+    <article className="game" data-played={props.game.date_played !== null}>
+      <header className="game__header">
+        Playing&nbsp;
+        <strong className="game__header game__game-type-name">{props.game.game_type.name}</strong>&nbsp;vs&nbsp;
+        <Player player={props.game.player2} />
+      </header>
+      <main className="game">
+        <MoveCollection onPlayClick={props.onPlayClick} gameset={props.gameset} game={props.game.guid} moves={props.game.game_type.move_types} />
 
-      {
-        props.game.game_type.move_types.map((m) => {
-          return <Move key={m.slug}
-
-                       gameset={props.gameset.guid}
-                       game={props.game.guid}
-                       name={m.slug} />
-        })
-      }
-    </main>
-  </article>
+        <ul>
+          <li>You Played: {props.game.move_player1 != null ? props.game.move_player1.name : ''}</li>
+          <li>Opponent Played: {props.game.move_player2 != null ? props.game.move_player2.name : ''}</li>
+          <li>Result: {props.game.result != null ? props.game.result : 'Unplayed'}</li>
+        </ul>
+      </main>
+      <footer className="game">
+        <Stats win={-1} lose={-1} draw={-1} />
+      </footer>
+    </article>
+  </div>
 );
 
 
 SingleGameComponent.displayName = 'SingleGameComponent';
 
 SingleGameComponent.propTypes = {
-
+  onPlayClick: React.PropTypes.func
 };
 
 SingleGameComponent.defaultProps = {};

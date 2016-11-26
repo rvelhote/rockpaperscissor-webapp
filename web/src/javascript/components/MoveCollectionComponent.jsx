@@ -23,25 +23,20 @@
  */
 import React from 'react';
 
-const MoveComponent = props => (
-  <li className="move-collection__move">
-    <button disabled={props.disabled ? 'disabled' : null} className="move-collection__move__button" type="button" onClick={() => props.onPlayClick(props.gameset, props.game, props.name)}>
-      <img width="85px" height="113px" alt={props.name} src={`/images/${props.name}.svg`} />
-    </button>
-  </li>
-);
+import Move from './MoveComponent';
 
-MoveComponent.displayName = 'MoveComponent';
+const MoveCollectionComponent = props =>
+  <ul className="move-collection">
+    { props.moves.map(m => <Move key={m.slug} onPlayClick={props.onPlayClick} gameset={props.gameset} game={props.game} name={m.slug} />) }
+  </ul>;
 
-MoveComponent.propTypes = {
-  disabled: React.PropTypes.bool,
-  name: React.PropTypes.string,
-  gameset: React.PropTypes.string,
-  game: React.PropTypes.string,
-  onPlayClick: React.PropTypes.func
+MoveCollectionComponent.displayName = 'MoveCollectionComponent';
+
+MoveCollectionComponent.propTypes = {
+  moves: React.PropTypes.arrayOf(React.PropTypes.object),
+  game: React.PropTypes.string
 };
 
-MoveComponent.defaultProps = {};
+MoveCollectionComponent.defaultProps = {};
 
-export default MoveComponent;
-
+export default MoveCollectionComponent;
