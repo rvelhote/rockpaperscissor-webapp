@@ -26,6 +26,7 @@ namespace AppBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 
@@ -68,6 +69,7 @@ class GameSet
 
     /**
      * @ORM\OneToMany(targetEntity="Game", mappedBy="gameSet", cascade={"persist"})
+     * @OrderBy({"id" = "ASC"})
      * @Expose
      */
     private $games;
