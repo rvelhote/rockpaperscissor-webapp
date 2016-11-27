@@ -21,173 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-// 'use strict';
-
 import React from 'react';
-import Player from './PlayerComponent';
+
+import MoveCollection from './MoveCollectionComponent';
 import Stats from './StatsComponent';
-import SingleGame from './SingleGameComponent';
+import Player from './PlayerComponent';
 
-class GameComponent extends React.Component {
-    constructor(props) {
-        super(props);
+const GameComponent = props => (
+  <div className="columns">
+    <article className="game" data-played={props.game.date_played !== null}>
+      <header className="game__header">
+        Playing&nbsp;
+        <strong className="game__header game__game-type-name">{props.game.game_type.name}</strong>&nbsp;vs&nbsp;
+        <Player player={props.game.player2} />
+      </header>
+      <main className="game__main">
+        <MoveCollection onPlayClick={props.onPlayClick} gameset={props.gameset} game={props.game.guid} moves={props.game.game_type.move_types} />
 
-        this.state = {
-            player: {
-                move: '',
-                handle: '@rvelhote'
-            },
-            gameset: {
-              guid: '',
-                games: []
-            },
-            game: {
-                opponent: {
-                    uuid: '',
-                    handle: '',
-                    picture: ''
-                },
-                moves: []
-            },
-            result: {
-                move: '',
-                winner: ''
-            },
-            stats: {
-                win: 0,
-                lose: 0,
-                draw: 0
-            },
-            history: [],
-            working: false
-        };
-    }
+        <ul>
+          <li>You Played: {props.game.move_player1 != null ? props.game.move_player1.name : ''}</li>
+          <li>Opponent Played: {props.game.move_player2 != null ? props.game.move_player2.name : ''}</li>
+          <li data-result={props.game.result === 0}>It's a draw!</li>
+          <li data-result={props.game.result === 1}>You Win!</li>
+          <li data-result={props.game.result === 2}><strong>{props.game.player2.username}</strong> Wins!</li>
+        </ul>
+      </main>
+      {/*<footer className="game__footer">*/}
+        {/*<Stats win={-1} lose={-1} draw={-1} />*/}
+      {/*</footer>*/}
+    </article>
+  </div>
+);
 
-    componentDidMount() {
-        this.requestNewGame();//.then(() => console.log(this.state));
-    }
-
-    onPlayClick(gamesetGuid, gameGuid, move) {
-        // console.log(gamesetGuid, gameGuid, move);
-        var data = new FormData();
-        data.append('make_move_form[move]', move);
-        data.append('make_move_form[game]', gameGuid);
-        data.append('make_move_form[gameset]', gamesetGuid);
-
-        var headers = new Headers();
-        headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
-
-        // this.setState({working: true});
-        //
-        var player = {
-            handle: this.state.player.handle,
-            move: move
-        };
-
-        var request = new Request('http://localhost/api/v1/play', {
-            method: 'POST',
-            body: data,
-            headers: headers
-        });
-
-        return fetch(request)
-            .then(response => response.json())
-            .then(response => this.setState({ working: false, player: player, stats: response.stats, gameset: response.gameset }));
-    }
-
-    requestNewGame() {
-        // this.setState({working: true});
-
-        var headers = new Headers();
-        headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
-
-        var request = new Request('http://localhost/api/v1/game', {
-            method: 'GET',
-            headers: headers
-        });
-        return fetch(request).then(response => response.json()).then(response => this.setState({ working: false, stats: response.stats, gameset: response.gameset }));
-    }
-
-    login() {
-        var headers = new Headers();
-        headers.append('Authorization', 'Bearer ' + window.localStorage.getItem('token'));
-
-        var data = new FormData();
-        data.append('_username', '@rvelhote');
-        data.append('_password', 'x');
-
-        var request = new Request('http://localhost/api/v1/login', {
-            method: 'POST',
-            body: data,
-            headers: headers
-        });
-        return fetch(request).then(response => response.json()).then(response => {
-
-            window.localStorage.setItem('token', response.token);
-
-        });
-    }
-
-    logout() {
-        window.localStorage.removeItem('token');
-    }
-
-    /**
-     *
-     * @returns {XML}
-     */
-    render() {
-        var working;
-        if(this.state.working) {
-            working = 'working'
-        }
-
-        return (
-        <div className="row expanded">
-            <header className="small-12 columns main">
-                <div className="row collapse expanded">
-                    <div className="columns">
-                        <Player player={this.state.player} />
-                    </div>
-
-                    <div className="columns">
-                        <button className="button button__login" onClick={this.login}>Login</button>
-                        <button className="button button__logout" onClick={this.logout}>Logout</button>
-                    </div>
-                </div>
-            </header>
-
-            <section className="small-12">
-                <ul className="row expanded">
-                    { this.state.gameset.games.map(g => <SingleGame key={g.guid} onPlayClick={this.onPlayClick.bind(this)} gameset={this.state.gameset.guid} game={g} />) }
-                </ul>
-                <div>
-                    <div>
-                        <ul>
-                            <li>Opponent played: {this.state.result.move}</li>
-                            <li>You played: {this.state.player.move}</li>
-                            <li>Result: {this.state.result.outcome}</li>
-                            <li>Result: {this.state.result.winner}</li>
-                            <li>Game ID: {this.state.game.guid}</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <footer className="small-12 columns">
-                <div className="columns">
-                    <Stats win={this.state.stats.wins} lose={this.state.stats.losses} draw={this.state.stats.draws}/>
-                </div>
-            </footer>
-        </div>
-        );
-    }
-}
 
 GameComponent.displayName = 'GameComponent';
 
-// Uncomment properties you need
-// GameComponent.propTypes = {};
-// GameComponent.defaultProps = {};
+GameComponent.propTypes = {
+  onPlayClick: React.PropTypes.func
+};
+
+GameComponent.defaultProps = {};
 
 export default GameComponent;
