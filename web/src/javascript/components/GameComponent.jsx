@@ -24,11 +24,10 @@
 import React from 'react';
 
 import MoveCollection from './MoveCollectionComponent';
-import Stats from './StatsComponent';
 import Player from './PlayerComponent';
 
 const GameComponent = props => (
-  <div className="columns">
+  <li className="gameset__game columns">
     <article className="game" data-played={props.game.date_played !== null}>
       <header className="game__header">
         Playing&nbsp;
@@ -36,30 +35,26 @@ const GameComponent = props => (
         <Player player={props.game.player2} />
       </header>
       <main className="game__main">
-        <MoveCollection onPlayClick={props.onPlayClick} gameset={props.gameset} game={props.game.guid} moves={props.game.game_type.move_types} />
+        <MoveCollection onPlayClick={props.onPlayClick} movePlayer1={props.game.move_player1} movePlayer2={props.game.move_player2} gameset={props.gameset} game={props.game.guid} moves={props.game.game_type.move_types} />
 
         <ul>
           <li>You Played: {props.game.move_player1 != null ? props.game.move_player1.name : ''}</li>
           <li>Opponent Played: {props.game.move_player2 != null ? props.game.move_player2.name : ''}</li>
-          <li data-result={props.game.result === 0}>It's a draw!</li>
+          <li data-result={props.game.result === 0}>Draw!</li>
           <li data-result={props.game.result === 1}>You Win!</li>
-          <li data-result={props.game.result === 2}><strong>{props.game.player2.username}</strong> Wins!</li>
+          <li data-result={props.game.result === 2}>{props.game.player2.username} Wins!</li>
         </ul>
       </main>
-      {/*<footer className="game__footer">*/}
-        {/*<Stats win={-1} lose={-1} draw={-1} />*/}
-      {/*</footer>*/}
     </article>
-  </div>
+  </li>
 );
 
 
 GameComponent.displayName = 'GameComponent';
 
 GameComponent.propTypes = {
+  gameset: React.PropTypes.string,
   onPlayClick: React.PropTypes.func
 };
-
-GameComponent.defaultProps = {};
 
 export default GameComponent;

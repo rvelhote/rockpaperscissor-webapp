@@ -36,8 +36,16 @@ body
   font-family: 'Roboto', sans-serif
   color: #333
 
+ul
+  padding-left: 0
+  list-style-type: none
+
 header.main
-  border-top: 0.3rem solid #65727A
+  padding-top: 1.5rem
+  padding-bottom: 1.5rem
+  border-bottom: 0.3rem solid #65727A
+  box-shadow: 0rem 0rem 2rem #ccc
+  background-color: #EEE
 
 button
   &.button
@@ -95,9 +103,26 @@ button
       &:hover
         background-color: #E6E8E3
 
-.game__main
-  li[data-result]
-    display: none
+.gameset
+  list-style-type: none
+  padding-left: 0
 
-  li[data-result=true]
-    display: block
+.game
+  padding: 1rem
+  text-align: center
+
+  .game__main
+    li[data-result]
+      display: none
+
+    li[data-result=true]
+      display: block
+
+  .move-collection__move__button[data-move-player1=true]
+    background-color: green
+
+  .move-collection__move__button[data-move-player2=true]
+    background-color: red
+
+  .move-collection__move__button[data-move-player1=true][data-move-player2=true]
+    background-color: yellow

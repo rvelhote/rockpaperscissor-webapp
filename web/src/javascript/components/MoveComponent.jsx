@@ -25,7 +25,12 @@ import React from 'react';
 
 const MoveComponent = props => (
   <li className="move-collection__move">
-    <button disabled={props.disabled ? 'disabled' : null} className="move-collection__move__button" type="button" onClick={() => props.onPlayClick(props.gameset, props.game, props.name)}>
+    <button
+      data-move-player1={props.movePlayer1 !== null && props.name === props.movePlayer1.slug}
+      data-move-player2={props.movePlayer2 !== null && props.name === props.movePlayer2.slug}
+      className="move-collection__move__button"
+      type="button"
+      onClick={() => props.onPlayClick(props.gameset, props.game, props.name)}>
       <img width="85px" height="113px" alt={props.name} src={`/images/${props.name}.svg`} />
     </button>
   </li>

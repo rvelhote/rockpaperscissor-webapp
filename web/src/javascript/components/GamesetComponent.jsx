@@ -25,7 +25,7 @@ import React from 'react';
 import Game from './GameComponent';
 
 const GamesetComponent = props =>
-  <ul className="row expanded">
+  <ul className="row expanded gameset">
     { props.gameset.games.map(g => <Game key={g.guid} onPlayClick={props.onPlayClick} gameset={props.gameset.guid} game={g} />) }
   </ul>;
 

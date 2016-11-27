@@ -27,7 +27,7 @@ import Move from './MoveComponent';
 
 const MoveCollectionComponent = props =>
   <ul className="move-collection">
-    { props.moves.map(m => <Move key={m.slug} onPlayClick={props.onPlayClick} gameset={props.gameset} game={props.game} name={m.slug} />) }
+    { props.moves.map(m => <Move key={m.slug} movePlayer1={props.movePlayer1} movePlayer2={props.movePlayer2} onPlayClick={props.onPlayClick} gameset={props.gameset} game={props.game} name={m.slug} />) }
   </ul>;
 
 MoveCollectionComponent.displayName = 'MoveCollectionComponent';

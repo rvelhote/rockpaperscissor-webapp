@@ -37,7 +37,7 @@ class GameBoardComponent extends React.Component {
     this.state = {
       player: {
         move: '',
-        handle: '@rvelhote'
+        username: '@rvelhote'
       },
       gameset: {
         guid: '',
@@ -149,7 +149,9 @@ class GameBoardComponent extends React.Component {
             <div className="columns">
               <Player player={this.state.player}/>
             </div>
-
+            <div className="columns">
+              <Stats win={this.state.stats.wins} lose={this.state.stats.losses} draw={this.state.stats.draws} />
+            </div>
             <div className="columns">
               <button className="button button__login" onClick={this.login}>Login</button>
               <button className="button button__logout" onClick={this.logout}>Logout</button>
@@ -160,12 +162,6 @@ class GameBoardComponent extends React.Component {
         <section className="small-12 columns">
           <Gameset gameset={this.state.gameset} onPlayClick={this.onPlayClick} />
         </section>
-
-        <footer className="small-12 columns">
-          <div className="columns">
-            <Stats win={this.state.stats.wins} lose={this.state.stats.losses} draw={this.state.stats.draws} />
-          </div>
-        </footer>
       </div>
     );
   }
